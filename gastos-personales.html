@@ -364,89 +364,131 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .cft-bal-neg{color:var(--red)!important;font-weight:800}
 .cft-bal-zero{color:var(--muted2);font-weight:600}
 .cft-alert-bar td{padding:2px 10px;font-size:0.7rem;background:rgba(239,68,68,.07);color:var(--red);font-weight:600;border-bottom:1px solid rgba(239,68,68,.15)}
-@media(max-width:620px){.cft-summary{grid-template-columns:1fr 1fr}.cft-filters{gap:5px}.cft-pill{padding:4px 10px;font-size:0.7rem}}
 
 /* ══════════════════════════════════════
    RESPONSIVE — MÓVIL  (≤ 620px)
 ══════════════════════════════════════ */
 @media(max-width:620px){
-  /* Header */
-  header{padding:10px 14px;gap:8px}
-  header h1{font-size:1rem}
-  .header-right{width:100%;justify-content:space-between}
+
+  /* ── Header ── */
+  header{padding:8px 12px;gap:6px;flex-wrap:wrap}
+  header h1{font-size:0.92rem}
   .header-date{display:none}
-  .rate-badge{order:10;width:100%;justify-content:space-between;padding:6px 12px}
-  .rate-label{font-size:0.6rem}
-  #rate-display{font-size:1rem}
+  /* header-right: fila 1 con toggle + botones pequeños */
+  .header-right{width:100%;flex-wrap:wrap;gap:5px;justify-content:flex-start}
+  .pill-toggle{order:0}
+  .pill-btn{padding:5px 9px;font-size:0.72rem}
+  /* Botones de acción: pequeños y en fila */
+  .header-action{padding:5px 9px;font-size:0.7rem;order:1}
+  /* Rate badge: ancho completo en segunda fila */
+  .rate-badge{order:10;width:100%;justify-content:space-between;padding:5px 10px;margin-top:2px}
+  .rate-label{font-size:0.58rem}
+  #rate-display{font-size:0.92rem}
+  .rate-refresh{font-size:0.9rem}
 
-  /* Contenedor */
-  .main-wrap{padding:12px 10px}
+  /* ── Contenedor ── */
+  .main-wrap{padding:10px 8px}
 
-  /* Period bar */
-  .period-bar{padding:10px 12px}
-  .period-selects select{font-size:0.82rem;padding:5px 8px}
+  /* ── Period bar ── */
+  .period-bar{padding:8px 10px;gap:8px}
+  .period-selects select{font-size:0.78rem;padding:4px 7px}
+  .btn-today{padding:5px 10px;font-size:0.72rem}
 
-  /* Cards: 2 columnas */
-  .cards{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-  .card{padding:12px 12px}
-  .card-lbl{font-size:0.62rem}
-  .card-val{font-size:1.15rem}
-  .card-sub{font-size:0.67rem}
+  /* ── Summary cards: 2 columnas ── */
+  .cards{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+  .card{padding:10px 10px}
+  .card-lbl{font-size:0.6rem}
+  .card-val{font-size:1.1rem}
+  .card-sub{font-size:0.64rem}
 
-  /* Main: tabs arriba, form abajo */
-  .main{display:flex;flex-direction:column;gap:14px}
+  /* ── Main layout: columna única, tabs primero ── */
+  .main{display:flex;flex-direction:column;gap:12px}
   .main > div:last-child{order:-1}
 
-  /* Form panel */
-  .form-panel{position:static;padding:14px}
+  /* ── Form panel ── */
+  .form-panel{position:static;padding:12px}
   .form-toggle-btn{display:flex}
   #form-body{display:none}
   #form-body.open{display:block}
+  .row2{grid-template-columns:1fr 1fr} /* mantiene 2 cols en formularios */
 
-  /* Tab bar */
-  .tab-bar{gap:2px}
-  .tab{padding:7px 3px;font-size:0.72rem}
+  /* ── Tab bar: scroll horizontal con 6+ tabs ── */
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+           scrollbar-width:none;padding:3px;gap:2px}
+  .tab-bar::-webkit-scrollbar{display:none}
+  .tab{padding:7px 11px;font-size:0.71rem;white-space:nowrap;flex-shrink:0}
 
-  /* Secciones */
-  .section-head{padding:11px 13px}
-  .section-body{padding:0 12px 12px}
+  /* ── Secciones ── */
+  .section-head{padding:10px 12px}
+  .section-body{padding:0 10px 10px}
 
-  /* IV bars */
+  /* ── Ingresos vs Gastos ── */
   .iv-row{grid-template-columns:1fr}
-  .iv-balance{font-size:0.82rem}
+  .iv-balance{font-size:0.8rem}
 
-  /* Category bars */
-  .bar-lbl{width:85px;font-size:0.7rem}
-  .bar-amt{width:65px;font-size:0.68rem}
+  /* ── Barras de categoría ── */
+  .bar-lbl{width:80px;font-size:0.68rem}
+  .bar-amt{width:58px;font-size:0.66rem}
 
-  /* Summary grid cols3 → 2 */
+  /* ── Summary grid ── */
   .sum-grid.cols3{grid-template-columns:1fr 1fr}
 
-  /* Commit items */
-  .commit-right{flex-direction:column;align-items:flex-end;gap:4px}
+  /* ── Compromisos ── */
+  .commit-right{flex-direction:column;align-items:flex-end;gap:3px}
 
-  /* Movimientos */
-  .filter-bar{gap:6px}
-  .filter-bar select{font-size:0.75rem;padding:6px 7px}
+  /* ── Transacciones ── */
+  .filter-bar{gap:5px;flex-wrap:wrap}
+  .filter-bar select{font-size:0.73rem;padding:5px 6px}
+  .tx-right{flex-wrap:wrap;justify-content:flex-end;gap:4px}
+  .tx-amt{min-width:70px;text-align:right}
 
-  /* Calendario */
-  .cal-day{min-height:46px;padding:3px}
-  .cal-day-num{font-size:0.72rem}
+  /* ── Calendario ── */
+  .cal-day{min-height:40px;padding:2px 3px}
+  .cal-day-num{font-size:0.68rem}
   .cal-badge{display:none}
-  .cal-wd{font-size:0.6rem;padding:3px 0}
+  .cal-wd{font-size:0.56rem;padding:2px 0}
+  .cal-detail{padding:10px}
+  .cal-det-title{font-size:0.77rem}
+  .cal-det-item{font-size:0.78rem;padding:5px 0}
 
-  /* Salud financiera */
-  .health-top{flex-direction:column;gap:12px}
+  /* ── Salud financiera ── */
+  .health-top{flex-direction:column;gap:10px}
   .health-metrics-grid{grid-template-columns:1fr 1fr}
+  .rec-item{font-size:0.78rem}
 
-  /* Modales: salen desde abajo */
+  /* ── Flujo de caja: hero card apilado ── */
+  #cft-summary{grid-template-columns:1fr 1fr}
+  #cft-summary > div[style*="grid-column"]{
+    flex-direction:column;align-items:flex-start;gap:6px
+  }
+  #cft-summary > div[style*="grid-column"] > div:last-child{
+    text-align:left;align-self:stretch
+  }
+  .cft-summary{grid-template-columns:1fr 1fr}
+  .cft-filters{gap:4px;flex-wrap:wrap}
+  .cft-pill{padding:4px 10px;font-size:0.7rem}
+  .cft-table{font-size:0.74rem;min-width:420px}
+  .cft-table thead th{padding:5px 7px;font-size:0.59rem}
+  .cft-table td{padding:6px 7px}
+  .cft-date-cell{width:46px;font-size:0.7rem}
+
+  /* ── Flow CSS (sección Resumen) ── */
+  .flow-metrics{grid-template-columns:1fr 1fr}
+  .flow-hero-val{font-size:2rem}
+  .health-score-wrap{width:68px;height:68px}
+  .health-ring{width:68px;height:68px}
+  #health-score-num{font-size:1.2rem}
+
+  /* ── Modales: salen desde abajo ── */
   .overlay{align-items:flex-end;padding:0}
-  .modal{border-radius:16px 16px 0 0;max-height:92vh;border-bottom:none}
-  .modal-footer{flex-direction:column}
+  .modal{border-radius:16px 16px 0 0;max-height:92vh;border-bottom:none;padding:18px 16px}
+  .modal-footer{flex-direction:column;gap:7px}
   .modal-footer .btn{width:100%}
+  .modal h2{font-size:0.95rem}
+  .row2{grid-template-columns:1fr 1fr} /* mantener en modales */
 
-  /* Toast */
-  .toast{right:12px;left:12px;text-align:center}
+  /* ── Toast ── */
+  .toast{right:10px;left:10px;text-align:center}
 }
 </style>
 </head>
