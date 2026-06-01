@@ -59,8 +59,9 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .card{background:var(--s1);border:1px solid var(--border);border-left-width:3px;border-radius:var(--r);padding:16px 18px}
 .card.c-green {border-left-color:var(--green)}
 .card.c-red   {border-left-color:var(--red)}
-.card.c-accent{border-left-color:var(--accent)}
-.card.c-purple{border-left-color:var(--purple)}
+.card.c-accent {border-left-color:var(--accent)}
+.card.c-accent2{border-left-color:var(--accent2)}
+.card.c-purple {border-left-color:var(--purple)}
 .card-lbl{font-size:0.68rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .card-val{font-size:1.5rem;font-weight:700;line-height:1}
 .card-val.green {color:var(--green)}
@@ -95,8 +96,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .submit-btn{width:100%;padding:11px;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s}
 .submit-btn:hover{opacity:.88}
 .submit-btn:active{transform:scale(.98)}
-.btn-exp{background:var(--red);  color:#fff}
-.btn-inc{background:var(--green);color:#fff}
+.btn-exp{background:var(--red);   color:#fff}
+.btn-inc{background:var(--green); color:#fff}
+.btn-obl{background:var(--purple);color:#fff}
+.type-btn.active-pur{background:var(--purple);color:#fff}
 
 /* ── Tab bar ── */
 .tab-bar{display:flex;gap:2px;background:var(--s2);border-radius:var(--r);padding:3px;margin-bottom:16px}
@@ -128,6 +131,17 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .bar-track{flex:1;height:8px;background:var(--bg);border-radius:99px;overflow:hidden}
 .bar-fill{height:100%;border-radius:99px;transition:width .4s}
 .bar-amt{font-size:0.73rem;color:var(--muted2);width:75px;text-align:right;flex-shrink:0}
+.bar-block{margin-bottom:7px}
+.bar-block .bar-row{margin-bottom:0;cursor:pointer;user-select:none}
+.bar-chevron{font-size:0.62rem;color:var(--muted2);flex-shrink:0;transition:transform .25s}
+.bar-row.open .bar-chevron{transform:rotate(180deg)}
+.cat-detail{overflow:hidden;border-left:2px solid var(--border);margin-left:4px}
+.cat-det-item{display:flex;align-items:center;gap:6px;padding:3px 4px 3px 8px;font-size:0.72rem}
+.cat-det-item+.cat-det-item{border-top:1px solid var(--border)}
+.cat-det-date{color:var(--muted2);width:22px;flex-shrink:0;font-variant-numeric:tabular-nums;font-size:0.68rem}
+.cat-det-desc{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.cat-det-amt{color:var(--muted2);text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums;font-size:0.71rem}
+.cat-det-empty{color:var(--muted2);font-size:0.71rem;padding:4px 8px}
 
 /* ── Commitment items ── */
 .commit-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
@@ -173,6 +187,9 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .tx-amt{font-size:0.92rem;font-weight:700}
 .tx-amt.inc{color:var(--green)}
 .tx-amt.exp{color:var(--red)}
+.tx-group-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 4px 5px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--border);margin-top:14px}
+.tx-group-hdr:first-child{margin-top:0}
+.tx-group-hdr .tx-ghdr-total{font-size:0.8rem;font-variant-numeric:tabular-nums}
 
 /* ── Buttons ── */
 .btn{border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s}
@@ -255,6 +272,22 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .form-toggle-btn{display:none;width:100%;background:none;border:none;cursor:pointer;padding:10px 0 14px;font-size:0.88rem;font-weight:700;color:var(--accent2);text-align:left;gap:8px;align-items:center;justify-content:space-between}
 #form-toggle-arrow{font-size:0.75rem;transition:transform .25s}
 
+/* ── Disponible para gastar ── */
+.disp-main{text-align:center;padding:10px 0 6px}
+.disp-lbl{font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.disp-val{font-size:2.1rem;font-weight:800;line-height:1;margin-bottom:5px}
+.disp-daily{font-size:0.78rem;color:var(--muted2);margin-top:2px}
+.disp-prog{height:10px;background:var(--bg);border-radius:99px;overflow:hidden;margin:14px 0 6px;display:flex}
+.disp-prog-seg{height:100%;transition:width .5s}
+.disp-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:0.69rem;color:var(--muted2)}
+.disp-legend-item{display:flex;align-items:center;gap:4px}
+.disp-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.disp-rows{border-top:1px solid var(--border);padding-top:8px}
+.disp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:0.81rem;border-bottom:1px solid var(--border)}
+.disp-row:last-child{border-bottom:none;font-weight:700;font-size:0.87rem;padding-top:9px}
+.disp-row-lbl{color:var(--muted);display:flex;align-items:center;gap:6px}
+.disp-row-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
 /* ── Salud Financiera ── */
 .health-top{display:flex;align-items:center;gap:20px;margin-bottom:18px}
 .health-score-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
@@ -280,6 +313,58 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .rec-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
 .rec-text{color:var(--text)}
 .rec-text strong{color:var(--text);font-weight:600}
+
+/* ── Flujo de Caja ── */
+.flow-hero{text-align:center;padding:16px 0 10px}
+.flow-hero-lbl{font-size:0.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);margin-bottom:8px}
+.flow-hero-val{font-size:2.6rem;font-weight:900;line-height:1;margin-bottom:6px}
+.flow-hero-sub{font-size:0.75rem;color:var(--muted2)}
+.flow-period-pill{display:inline-block;background:var(--s2);border:1px solid var(--border);border-radius:99px;padding:4px 14px;font-size:0.73rem;color:var(--muted);margin-bottom:12px}
+.flow-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0 12px}
+.flow-metric{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.flow-metric-lbl{font-size:0.64rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px}
+.flow-metric-val{font-size:1.05rem;font-weight:700}
+.flow-prog-wrap{margin:8px 0 6px}
+.flow-prog{height:12px;background:var(--s2);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.flow-prog-fill{height:100%;border-radius:99px;transition:width .5s}
+.flow-prog-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted2);margin-top:4px}
+.flow-breakdown{border-top:1px solid var(--border);padding-top:8px;margin-top:10px}
+.flow-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:0.81rem;border-bottom:1px solid var(--border)}
+.flow-row:last-child{border-bottom:none;font-weight:700;font-size:0.87rem;padding-top:8px}
+.flow-row-lbl{color:var(--muted);display:flex;align-items:center;gap:6px}
+.flow-row-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.flow-pending-item{display:flex;justify-content:space-between;padding:3px 0 3px 16px;font-size:0.74rem;border-bottom:1px solid var(--border)}
+.flow-pending-item:last-child{border-bottom:none}
+.flow-empty{text-align:center;padding:24px;color:var(--muted2);font-size:0.82rem}
+
+/* ── Flujo de Caja Timeline ── */
+.cft-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin-bottom:14px}
+.cft-sum-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.cft-sum-lbl{font-size:0.63rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px}
+.cft-sum-val{font-size:1.05rem;font-weight:700}
+.cft-filters{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.cft-pill{padding:5px 14px;border-radius:99px;font-size:0.75rem;font-weight:600;border:1px solid var(--border);background:var(--bg);color:var(--muted2);cursor:pointer;transition:all .15s}
+.cft-pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cft-pill:hover:not(.on){background:var(--s2)}
+.cft-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cft-table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:480px}
+.cft-table thead th{font-size:0.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);font-weight:700;padding:7px 10px;border-bottom:2px solid var(--border);background:var(--s2);text-align:left;white-space:nowrap}
+.cft-table thead th.r{text-align:right}
+.cft-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.cft-table td.r{text-align:right;font-variant-numeric:tabular-nums}
+.cft-row-pending td{opacity:.7;font-style:italic}
+.cft-row-today{background:rgba(99,102,241,.06)!important}
+.cft-row-today td{font-weight:500}
+.cft-today-tag{display:inline-block;background:var(--accent);color:#fff;font-size:0.58rem;font-weight:700;padding:1px 5px;border-radius:99px;margin-left:5px;vertical-align:middle;letter-spacing:.04em}
+.cft-pend-tag{font-size:0.68rem;color:var(--muted2);margin-left:4px}
+.cft-date-cell{color:var(--muted2);font-size:0.75rem;white-space:nowrap;width:58px}
+.cft-inc{color:var(--green)!important;font-weight:600}
+.cft-exp{color:var(--red)!important;font-weight:600}
+.cft-bal-pos{color:var(--green);font-weight:700}
+.cft-bal-neg{color:var(--red)!important;font-weight:800}
+.cft-bal-zero{color:var(--muted2);font-weight:600}
+.cft-alert-bar td{padding:2px 10px;font-size:0.7rem;background:rgba(239,68,68,.07);color:var(--red);font-weight:600;border-bottom:1px solid rgba(239,68,68,.15)}
+@media(max-width:620px){.cft-summary{grid-template-columns:1fr 1fr}.cft-filters{gap:5px}.cft-pill{padding:4px 10px;font-size:0.7rem}}
 
 /* ══════════════════════════════════════
    RESPONSIVE — MÓVIL  (≤ 620px)
@@ -384,6 +469,9 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
     </div>
     <button class="header-action" onclick="openManageFixed()">Gastos Fijos</button>
     <button class="header-action" onclick="openObligationsModal()">Obligaciones</button>
+    <button class="header-action" onclick="exportData()" title="Exportar todos los datos como JSON">⬇ Exportar</button>
+    <button class="header-action" onclick="triggerImport()" title="Importar datos desde JSON">⬆ Importar</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)" />
     <span class="header-date" id="header-date"></span>
   </div>
 </header>
@@ -411,19 +499,24 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
       <div class="card-sub" id="card-inc-y">Año: $0</div>
     </div>
     <div class="card c-red">
-      <div class="card-lbl">Gastos del mes</div>
+      <div class="card-lbl">Gastos variables</div>
       <div class="card-val red" id="card-exp-m">$0</div>
       <div class="card-sub" id="card-exp-y">Año: $0</div>
+    </div>
+    <div class="card c-accent2">
+      <div class="card-lbl">Gastos fijos</div>
+      <div class="card-val" style="color:var(--accent2)" id="card-fx-m">$0</div>
+      <div class="card-sub" id="card-fx-sub">0 pagados</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-lbl">Obligaciones</div>
+      <div class="card-val purple" id="card-obl-m">$0</div>
+      <div class="card-sub" id="card-obl-sub">0 pagadas</div>
     </div>
     <div class="card c-accent">
       <div class="card-lbl">Balance del mes</div>
       <div class="card-val accent" id="card-bal-m">$0</div>
       <div class="card-sub" id="card-savings">Ahorro: 0%</div>
-    </div>
-    <div class="card c-purple">
-      <div class="card-lbl">Compromisos / mes</div>
-      <div class="card-val purple" id="card-commit">$0</div>
-      <div class="card-sub" id="card-commit-sub">0 pagados</div>
     </div>
   </div>
 
@@ -437,35 +530,60 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         <span id="form-toggle-arrow">▼</span>
       </button>
       <div id="form-body">
-      <div class="type-row">
+      <div class="type-row" style="grid-template-columns:1fr 1fr 1fr">
         <button class="type-btn active-exp" id="btn-exp" onclick="setType('expense')">− Gasto</button>
         <button class="type-btn"            id="btn-inc" onclick="setType('income')">+ Ingreso</button>
+        <button class="type-btn"            id="btn-obl" onclick="setType('obligation')">Obligación</button>
       </div>
       <form id="entry-form">
-        <div class="field">
+        <div class="field" id="f-date-field">
           <label>Fecha</label>
           <input type="date" id="f-date" required />
         </div>
         <div class="field">
-          <label>Monto</label>
+          <label id="f-amount-lbl">Monto</label>
           <input type="number" id="f-amount" placeholder="0.00" step="0.01" min="0" required />
         </div>
         <div class="field">
-          <label>Descripción</label>
+          <label id="f-desc-lbl">Descripción</label>
           <input type="text" id="f-desc" placeholder="¿En qué gastaste?" required />
         </div>
-        <div class="field">
+        <div class="field" id="f-cat-field">
           <label>Categoría</label>
           <select id="f-category"></select>
+        </div>
+        <div class="field" id="f-obl-type-field" style="display:none">
+          <label>Tipo de obligación</label>
+          <select id="f-obl-type">
+            <option value="loan">Préstamo personal</option>
+            <option value="mortgage">Hipoteca / Renta</option>
+            <option value="car">Crédito automotriz</option>
+            <option value="creditcard">Tarjeta de crédito</option>
+            <option value="subscription">Suscripción fija</option>
+            <option value="other">Otro</option>
+          </select>
+        </div>
+        <div class="row2" id="f-obl-extra-field" style="display:none">
+          <div class="field">
+            <label>Deuda total (opcional)</label>
+            <input type="number" id="f-obl-total" placeholder="0.00" step="0.01" min="0" />
+          </div>
+          <div class="field">
+            <label>Día de pago</label>
+            <input type="number" id="f-obl-dueday" placeholder="1–31" min="1" max="31" />
+          </div>
         </div>
         <div class="field">
           <label>Nota (opcional)</label>
           <textarea id="f-note" placeholder="Detalles..."></textarea>
         </div>
-        <label class="recur-label" id="recur-lbl">
-          <input type="checkbox" id="f-recurring" onchange="this.closest('label').classList.toggle('on',this.checked)" />
-          <span>Repetir como gasto fijo mensual</span>
-        </label>
+        <div id="exp-type-row" style="display:none;margin-bottom:14px">
+          <div style="font-size:0.75rem;color:var(--muted2);margin-bottom:6px">Tipo de gasto</div>
+          <div class="type-row" style="margin-bottom:0">
+            <button type="button" class="type-btn active-exp" id="btn-var" onclick="setExpType('variable')">Variable</button>
+            <button type="button" class="type-btn" id="btn-fix" onclick="setExpType('fixed')">Fijo mensual</button>
+          </div>
+        </div>
         <button type="submit" class="submit-btn btn-exp" id="f-submit">Agregar Gasto</button>
       </form>
       </div><!-- /form-body -->
@@ -476,8 +594,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
       <div class="tab-bar">
         <button class="tab on" id="tab-resumen"      onclick="setView('resumen')">Resumen</button>
         <button class="tab"    id="tab-compromisos"  onclick="setView('compromisos')">Compromisos</button>
-        <button class="tab"    id="tab-movimientos"  onclick="setView('movimientos')">Movimientos</button>
+        <button class="tab"    id="tab-gastos"       onclick="setView('gastos')">Gastos</button>
+        <button class="tab"    id="tab-ingresos"     onclick="setView('ingresos')">Ingresos</button>
         <button class="tab"    id="tab-calendario"   onclick="setView('calendario')">Calendario</button>
+        <button class="tab"    id="tab-flujo"        onclick="setView('flujo')">Flujo</button>
       </div>
 
       <!-- TAB: RESUMEN -->
@@ -545,20 +665,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
       <div id="view-compromisos" style="display:none">
         <div class="section">
           <div class="section-head">
-            <span class="section-title">Resumen del mes</span>
+            <span class="section-title">Obligaciones del mes</span>
           </div>
           <div class="section-body">
             <div class="sum-grid cols3" id="commit-summary"></div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="section-head" style="cursor:pointer" onclick="toggleSection('sec-fixed')">
-            <span class="section-title">Gastos Fijos</span>
-            <span class="section-meta" id="fixed-meta"></span>
-          </div>
-          <div class="section-body" id="sec-fixed">
-            <div id="fixed-list"></div>
-            <button class="btn neutral sm" style="margin-top:8px" onclick="openManageFixed()">Gestionar gastos fijos</button>
           </div>
         </div>
         <div class="section">
@@ -573,8 +683,8 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         </div>
       </div>
 
-      <!-- TAB: MOVIMIENTOS -->
-      <div id="view-movimientos" style="display:none">
+      <!-- TAB: GASTOS -->
+      <div id="view-gastos" style="display:none">
         <div class="filter-bar">
           <div class="filter-group">
             <label>Tipo:</label>
@@ -592,10 +702,21 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         </div>
         <div class="section">
           <div class="section-head">
-            <span class="section-title">Movimientos</span>
+            <span class="section-title">Registros del período</span>
             <span class="section-meta" id="tx-count"></span>
           </div>
           <div class="section-body" id="tx-list"></div>
+        </div>
+      </div>
+
+      <!-- TAB: INGRESOS -->
+      <div id="view-ingresos" style="display:none">
+        <div class="section">
+          <div class="section-head">
+            <span class="section-title">Ingresos del período</span>
+            <span class="section-meta" id="inc-count"></span>
+          </div>
+          <div class="section-body" id="inc-list"></div>
         </div>
       </div>
 
@@ -622,6 +743,27 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         </div>
       </div>
 
+      <!-- TAB: FLUJO -->
+      <div id="view-flujo" style="display:none">
+        <div class="cft-summary" id="cft-summary"></div>
+        <div class="cft-filters">
+          <button class="cft-pill on" id="cft-f-all" onclick="setCftFilter('all')">Mes completo</button>
+          <button class="cft-pill"    id="cft-f-q1"  onclick="setCftFilter('q1')">1 – 15</button>
+          <button class="cft-pill"    id="cft-f-q2"  onclick="setCftFilter('q2')">16 – fin</button>
+          <button class="btn acc sm"  style="margin-left:auto" onclick="openQuickExpense()">+ Gasto rápido</button>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <span class="section-title" id="cft-period-label">Flujo de Caja</span>
+          </div>
+          <div class="section-body" style="padding-bottom:8px">
+            <div class="cft-table-wrap">
+              <table class="cft-table" id="cft-table"></table>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- end right -->
   </div><!-- end main -->
 </div><!-- end container -->
@@ -631,9 +773,16 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   <div class="modal">
     <h2>Editar registro</h2>
     <div class="modal-sub">Modifica los datos del movimiento.</div>
-    <div class="type-row" style="margin-bottom:16px">
+    <div class="type-row" style="margin-bottom:12px">
       <button class="type-btn active-exp" id="e-btn-exp" onclick="setEditType('expense')">− Gasto</button>
       <button class="type-btn"            id="e-btn-inc" onclick="setEditType('income')">+ Ingreso</button>
+    </div>
+    <div id="e-exp-type-row" style="display:none;margin-bottom:14px">
+      <div style="font-size:0.75rem;color:var(--muted2);margin-bottom:6px">Tipo de gasto</div>
+      <div class="type-row" style="margin-bottom:0">
+        <button type="button" class="type-btn active-exp" id="e-btn-var" onclick="setEditExpType('variable')">Variable</button>
+        <button type="button" class="type-btn"            id="e-btn-fix" onclick="setEditExpType('fixed')">Fijo mensual</button>
+      </div>
     </div>
     <div class="field"><label>Monto</label><input type="number" id="e-amount" step="0.01" min="0" /></div>
     <div class="field"><label>Descripción</label><input type="text" id="e-desc" /></div>
@@ -706,6 +855,49 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
     <div class="modal-footer">
       <button class="btn ghost md" onclick="closeModal('modal-fixed')">Cerrar</button>
       <button class="btn exp md full" onclick="addFixed()">Agregar gasto fijo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit commitment -->
+<div class="overlay" id="modal-edit-commit">
+  <div class="modal" style="max-width:460px">
+    <h2 id="ec-title">Editar</h2>
+    <div class="field"><label>Nombre</label><input type="text" id="ec-name" /></div>
+    <div id="ec-obl-fields">
+      <div class="row2">
+        <div class="field">
+          <label>Tipo</label>
+          <select id="ec-type">
+            <option value="loan">Préstamo personal</option>
+            <option value="mortgage">Hipoteca / Renta</option>
+            <option value="car">Crédito automotriz</option>
+            <option value="creditcard">Tarjeta de crédito</option>
+            <option value="subscription">Suscripción fija</option>
+            <option value="other">Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Pago mensual</label><input type="number" id="ec-monthly" step="0.01" min="0" placeholder="0.00" /></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Deuda total</label><input type="number" id="ec-total" step="0.01" min="0" placeholder="0.00" /></div>
+        <div class="field"><label>Deuda restante</label><input type="number" id="ec-remaining" step="0.01" min="0" placeholder="0.00" /></div>
+      </div>
+    </div>
+    <div id="ec-fx-fields">
+      <div class="row2">
+        <div class="field"><label>Monto mensual</label><input type="number" id="ec-amount" step="0.01" min="0" placeholder="0.00" /></div>
+        <div class="field"><label>Categoría</label><select id="ec-category"></select></div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Día de pago</label><input type="number" id="ec-dueday" min="1" max="31" placeholder="1–31" /></div>
+      <div class="field"><label>Nota (opcional)</label><input type="text" id="ec-note" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn ghost md" onclick="closeModal('modal-edit-commit')">Cancelar</button>
+      <button class="btn neutral md" id="ec-to-var-btn" onclick="convertFxToVariable()" style="display:none">→ Hacer variable</button>
+      <button class="btn md full" id="ec-save-btn" onclick="saveEditCommit()">Guardar cambios</button>
     </div>
   </div>
 </div>
@@ -796,12 +988,32 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   </div>
 </div>
 
+<!-- MODAL: Gasto rápido (Flujo) -->
+<div class="overlay" id="modal-quick-exp">
+  <div class="modal" style="max-width:380px">
+    <h2>Agregar gasto</h2>
+    <div class="modal-sub">Registrá un gasto variable rápido.</div>
+    <div class="field"><label>Descripción</label><input type="text" id="qe-desc" placeholder="¿En qué gastaste?" /></div>
+    <div class="row2">
+      <div class="field"><label>Monto</label><input type="number" id="qe-amount" min="0" step="0.01" placeholder="0.00" /></div>
+      <div class="field"><label>Fecha</label><input type="date" id="qe-date" /></div>
+    </div>
+    <div class="field"><label>Categoría</label><select id="qe-category"></select></div>
+    <div class="modal-footer">
+      <button class="btn ghost md" onclick="closeModal('modal-quick-exp')">Cancelar</button>
+      <button class="btn exp md full" onclick="saveQuickExpense()">Guardar gasto</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const EXPENSE_CATS={food:'Alimentación',transport:'Transporte',housing:'Vivienda',entertainment:'Entretenimiento',health:'Salud',shopping:'Compras',education:'Educación',other:'Otro'};
 const INCOME_CATS={salary:'Salario',freelance:'Freelance',business:'Negocio',investment:'Inversiones',gift:'Regalo',other:'Otro'};
 const CAT_CLS={food:'c-food',transport:'c-transport',housing:'c-housing',entertainment:'c-entertainment',health:'c-health',shopping:'c-shopping',education:'c-education',other:'c-other',salary:'c-salary',freelance:'c-freelance',business:'c-business',investment:'c-investment',gift:'c-gift'};
+function loadCustomCats(type){return JSON.parse(localStorage.getItem('custom_cats_'+type)||'{}');}
+function saveCustomCats(type,cats){localStorage.setItem('custom_cats_'+type,JSON.stringify(cats));}
 const EXP_COLORS=['#f59e0b','#3b82f6','#8b5cf6','#ec4899','#22c55e','#f97316','#06b6d4','#94a3b8'];
 const INC_COLORS=['#10b981','#6366f1','#f59e0b','#14b8a6','#e879f9','#94a3b8'];
 const OBL_TYPES={loan:'Préstamo personal',mortgage:'Hipoteca / Renta',car:'Crédito automotriz',creditcard:'Tarjeta de crédito',subscription:'Suscripción fija',other:'Otro'};
@@ -927,11 +1139,27 @@ function fmtDate(d){const[y,m,day]=d.split('-');return `${day} ${['Ene','Feb','M
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ── Form type ── */
-let currentType='expense', editType='expense';
-function getCats(t){return t==='income'?INCOME_CATS:EXPENSE_CATS;}
+let currentType='expense', editType='expense', expType='variable';
+function setExpType(t){
+  expType=t;
+  document.getElementById('btn-var').className='type-btn'+(t==='variable'?' active-exp':'');
+  document.getElementById('btn-fix').className='type-btn'+(t==='fixed'?' active-exp':'');
+}
+function getCats(t){return t==='income'?{...INCOME_CATS,...loadCustomCats('income')}:{...EXPENSE_CATS,...loadCustomCats('expense')};}
 function getColors(t){return t==='income'?INC_COLORS:EXP_COLORS;}
 function populateCatSelect(el,type,sel){
+  el.dataset.catType=type;
   el.innerHTML=Object.entries(getCats(type)).map(([k,v])=>`<option value="${k}"${k===sel?' selected':''}>${v}</option>`).join('');
+  el.innerHTML+=`<option value="__new__">➕ Nueva categoría...</option>`;
+}
+function onCatChange(el){
+  if(el.value!=='__new__') return;
+  const type=el.dataset.catType||'expense';
+  const name=(window.prompt('Nombre de la nueva categoría:')||'').trim();
+  if(!name){populateCatSelect(el,type); return;}
+  const key='c_'+name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_áéíóúüñ]/gi,'');
+  const customs=loadCustomCats(type); customs[key]=name; saveCustomCats(type,customs);
+  populateCatSelect(el,type,key); rebuildFilterCat();
 }
 function toggleForm(){
   const body=document.getElementById('form-body');
@@ -941,19 +1169,35 @@ function toggleForm(){
 }
 function setType(t){
   currentType=t;
+  const isObl=t==='obligation';
   document.getElementById('btn-exp').className='type-btn'+(t==='expense'?' active-exp':'');
-  document.getElementById('btn-inc').className='type-btn'+(t==='income' ?' active-inc':'');
-  document.getElementById('f-submit').className='submit-btn '+(t==='expense'?'btn-exp':'btn-inc');
-  document.getElementById('f-submit').textContent=t==='expense'?'Agregar Gasto':'Agregar Ingreso';
-  document.getElementById('f-desc').placeholder=t==='expense'?'¿En qué gastaste?':'¿De dónde proviene?';
-  document.getElementById('recur-lbl').style.display=t==='expense'?'flex':'none';
-  populateCatSelect(document.getElementById('f-category'),t);
+  document.getElementById('btn-inc').className='type-btn'+(t==='income'?' active-inc':'');
+  document.getElementById('btn-obl').className='type-btn'+(isObl?' active-pur':'');
+  document.getElementById('f-submit').className='submit-btn '+(t==='expense'?'btn-exp':t==='income'?'btn-inc':'btn-obl');
+  document.getElementById('f-submit').textContent=t==='expense'?'Agregar Gasto':t==='income'?'Agregar Ingreso':'Agregar Obligación';
+  document.getElementById('f-desc').placeholder=isObl?'Nombre (ej. Préstamo banco...)':t==='income'?'¿De dónde proviene?':'¿En qué gastaste?';
+  document.getElementById('f-amount-lbl').textContent=isObl?'Pago mensual':'Monto';
+  document.getElementById('f-desc-lbl').textContent=isObl?'Nombre':'Descripción';
+  document.getElementById('f-date-field').style.display=isObl?'none':'block';
+  document.getElementById('f-date').required=!isObl;
+  document.getElementById('f-cat-field').style.display=isObl?'none':'block';
+  document.getElementById('f-obl-type-field').style.display=isObl?'block':'none';
+  document.getElementById('f-obl-extra-field').style.display=isObl?'grid':'none';
+  document.getElementById('exp-type-row').style.display=t==='expense'?'block':'none';
+  if(!isObl) populateCatSelect(document.getElementById('f-category'),t);
+}
+let editExpType='variable';
+function setEditExpType(t){
+  editExpType=t;
+  document.getElementById('e-btn-var').className='type-btn'+(t==='variable'?' active-exp':'');
+  document.getElementById('e-btn-fix').className='type-btn'+(t==='fixed'?' active-exp':'');
 }
 function setEditType(t){
   editType=t;
   document.getElementById('e-btn-exp').className='type-btn'+(t==='expense'?' active-exp':'');
   document.getElementById('e-btn-inc').className='type-btn'+(t==='income' ?' active-inc':'');
   document.getElementById('e-save-btn').className='btn '+(t==='expense'?'exp':'inc')+' md full';
+  document.getElementById('e-exp-type-row').style.display=t==='expense'?'block':'none';
   populateCatSelect(document.getElementById('e-category'),t);
 }
 
@@ -971,14 +1215,20 @@ for(const y of[...Array(6)].map((_,i)=>now.getFullYear()-2+i).sort((a,b)=>b-a)){
   if(y===now.getFullYear()) o.selected=true;
   yearSel.appendChild(o);
 }
-document.getElementById('f-date').value=now.toISOString().split('T')[0];
+function defaultFormDate(){
+  const m=+monthSel.value, y=+yearSel.value;
+  const thisM=now.getMonth()+1, thisY=now.getFullYear();
+  if(m===thisM && y===thisY) return now.toISOString().split('T')[0];
+  return `${y}-${String(m).padStart(2,'0')}-01`;
+}
+document.getElementById('f-date').value=defaultFormDate();
 document.getElementById('header-date').textContent=now.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
 function rebuildFilterCat(){
   const ft=document.getElementById('filter-type').value;
   const sel=document.getElementById('filter-cat'); const prev=sel.value;
   sel.innerHTML='<option value="">Todas</option>';
-  const cats=ft==='income'?INCOME_CATS:ft==='expense'?EXPENSE_CATS:{...EXPENSE_CATS,...INCOME_CATS};
+  const cats=ft==='income'?getCats('income'):ft==='expense'?getCats('expense'):{...getCats('expense'),...getCats('income')};
   Object.entries(cats).forEach(([k,v])=>{ const o=document.createElement('option'); o.value=k; o.textContent=v; if(k===prev) o.selected=true; sel.appendChild(o); });
 }
 
@@ -995,14 +1245,22 @@ function sumBy(arr,t){return arr.filter(e=>(e.type||'expense')===t).reduce((s,e)
 
 /* ── Obligations paid tracking ── */
 function oblPaidKey(id,y,m){return `obl_paid_${id}_${y}_${String(m).padStart(2,'0')}`;}
-function isOblPaid(id,y,m){return localStorage.getItem(oblPaidKey(id,y,m))==='1';}
+function isOblPaid(id,y,m){
+  if(localStorage.getItem(oblPaidKey(id,y,m))==='1') return true;
+  const prefix=`${y}-${String(m).padStart(2,'0')}`;
+  return loadEntries().some(e=>e.commitId===id&&e.commitType==='obl'&&e.date&&e.date.startsWith(prefix));
+}
 function setOblPaid(id,y,m){localStorage.setItem(oblPaidKey(id,y,m),'1');}
 function isOverdue(o,y,m){
   if(!o.dueDay) return false;
   return now.getFullYear()===y && now.getMonth()+1===m && now.getDate()>o.dueDay && !isOblPaid(o.id,y,m);
 }
 function fixedPaidKey(id,y,m){return `fx_paid_${id}_${y}_${String(m).padStart(2,'0')}`;}
-function isFixedPaid(id,y,m){return localStorage.getItem(fixedPaidKey(id,y,m))==='1';}
+function isFixedPaid(id,y,m){
+  if(localStorage.getItem(fixedPaidKey(id,y,m))==='1') return true;
+  const prefix=`${y}-${String(m).padStart(2,'0')}`;
+  return loadEntries().some(e=>e.commitId===id&&e.commitType==='fx'&&e.date&&e.date.startsWith(prefix));
+}
 function setFixedPaid(id,y,m){localStorage.setItem(fixedPaidKey(id,y,m),'1');}
 function isFixedOverdue(f,y,m){
   if(!f.dueDay) return false;
@@ -1021,8 +1279,21 @@ function resolveType(selectId,customId){
   return document.getElementById(customId).value.trim()||'other';
 }
 
+/* ── Revert payment ── */
+function revertPayment(commitId,commitType){
+  if(!confirm('¿Revertir este pago? Se eliminará el movimiento vinculado.')) return;
+  const m=+monthSel.value, y=+yearSel.value;
+  const prefix=`${y}-${String(m).padStart(2,'0')}`;
+  const all=loadEntries();
+  const linked=all.find(e=>e.commitId===commitId&&e.commitType===commitType&&e.date&&e.date.startsWith(prefix));
+  if(linked) saveEntries(all.filter(e=>e.id!==linked.id));
+  if(commitType==='obl') localStorage.removeItem(oblPaidKey(commitId,y,m));
+  else localStorage.removeItem(fixedPaidKey(commitId,y,m));
+  showToast('Pago revertido','var(--yellow)'); render();
+}
+
 /* ── Commit item HTML ── */
-function commitItemHTML(name, meta, amount, amtColor, statusCls, statusTxt, payBtn){
+function commitItemHTML(name, meta, amount, amtColor, statusCls, statusTxt, payBtn, editBtn){
   return `<div class="commit-item">
     <div class="commit-dot" style="background:${amtColor}"></div>
     <div class="commit-info">
@@ -1032,7 +1303,7 @@ function commitItemHTML(name, meta, amount, amtColor, statusCls, statusTxt, payB
     <div class="commit-right">
       <div class="commit-amt" style="color:${amtColor}">${fmt(amount)}</div>
       <span class="status-pill ${statusCls}">${statusTxt}</span>
-      ${payBtn||''}
+      ${payBtn||''}${editBtn||''}
     </div>
   </div>`;
 }
@@ -1044,31 +1315,36 @@ function render(){
   const selM=+monthSel.value, selY=+yearSel.value;
   const thisM=now.getMonth()+1, thisY=now.getFullYear();
 
-  /* Cards (always current month) */
-  const allM=all.filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getMonth()+1===thisM&&d.getFullYear()===thisY;});
-  const allY=all.filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getFullYear()===thisY;});
+  /* Cards (selected period) */
+  const allM=all.filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getMonth()+1===selM&&d.getFullYear()===selY;});
+  const allY=all.filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getFullYear()===selY;});
   const incM=sumBy(allM,'income'), expM=sumBy(allM,'expense');
   const incY=sumBy(allY,'income'), expY=sumBy(allY,'expense');
+  const varExpM=allM.filter(e=>(e.type||'expense')==='expense'&&!e.commitId).reduce((s,e)=>s+ +e.amount,0);
+  const varExpY=allY.filter(e=>(e.type||'expense')==='expense'&&!e.commitId).reduce((s,e)=>s+ +e.amount,0);
   const balM=incM-expM;
   const savPct=incM>0?Math.round(balM/incM*100):0;
 
   const oblsActive=loadObligations().filter(o=>o.active!==false);
   const fixedActive=loadFixed().filter(f=>f.active!==false);
-  const paidOblCount=oblsActive.filter(o=>isOblPaid(o.id,thisY,thisM)).length;
-  const paidFxCount =fixedActive.filter(f=>isFixedPaid(f.id,thisY,thisM)).length;
-  const totalCommit=oblsActive.reduce((s,o)=>s+ +o.monthlyPayment,0)+fixedActive.reduce((s,f)=>s+ +f.amount,0);
-  const totalCommitCount=oblsActive.length+fixedActive.length;
-  const paidCommitCount=paidOblCount+paidFxCount;
+  const paidOblCount=oblsActive.filter(o=>isOblPaid(o.id,selY,selM)).length;
+  const paidFxCount =fixedActive.filter(f=>isFixedPaid(f.id,selY,selM)).length;
+  const fxTotal =fixedActive.reduce((s,f)=>s+ +f.amount,0);
+  const oblTotal=oblsActive.reduce((s,o)=>s+ +o.monthlyPayment,0);
+  const paidFxAmt =fixedActive.filter(f=>isFixedPaid(f.id,selY,selM)).reduce((s,f)=>s+ +f.amount,0);
+  const paidOblAmt=oblsActive.filter(o=>isOblPaid(o.id,selY,selM)).reduce((s,o)=>s+ +o.monthlyPayment,0);
 
   document.getElementById('card-inc-m').textContent=fmt(incM);
   document.getElementById('card-inc-y').textContent='Año: '+fmt(incY);
-  document.getElementById('card-exp-m').textContent=fmt(expM);
-  document.getElementById('card-exp-y').textContent='Año: '+fmt(expY);
+  document.getElementById('card-exp-m').textContent=fmt(varExpM);
+  document.getElementById('card-exp-y').textContent='Año: '+fmt(varExpY);
   const bEl=document.getElementById('card-bal-m');
   bEl.textContent=fmt(balM); bEl.className='card-val '+(balM>=0?'green':'red');
   document.getElementById('card-savings').textContent='Ahorro: '+savPct+'%';
-  document.getElementById('card-commit').textContent=fmt(totalCommit);
-  document.getElementById('card-commit-sub').textContent=`${paidCommitCount}/${totalCommitCount} pagados`;
+  document.getElementById('card-fx-m').textContent=fmt(fxTotal);
+  document.getElementById('card-fx-sub').textContent=`Pagado: ${fmt(paidFxAmt)} · ${paidFxCount}/${fixedActive.length}`;
+  document.getElementById('card-obl-m').textContent=fmt(oblTotal);
+  document.getElementById('card-obl-sub').textContent=`Pagado: ${fmt(paidOblAmt)} · ${paidOblCount}/${oblsActive.length}`;
 
   /* IV comparison (period) */
   const fInc=sumBy(periodEntries,'income'), fExp=sumBy(periodEntries,'expense');
@@ -1094,7 +1370,7 @@ function render(){
   const maxV=Math.max(...Object.values(chartData),1);
   const catKeys=Object.keys(getCats(chartType));
   const colors=getColors(chartType);
-  const allCatsMap={...EXPENSE_CATS,...INCOME_CATS};
+  const allCatsMap={...getCats('expense'),...getCats('income')};
   const chartEl=document.getElementById('chart');
   if(!Object.keys(chartData).length){
     chartEl.innerHTML='<div style="color:var(--muted2);font-size:0.8rem;text-align:center;padding:10px">Sin datos para este período</div>';
@@ -1102,7 +1378,7 @@ function render(){
     chartEl.innerHTML=Object.entries(chartData).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>{
       const pct=(val/maxV*100).toFixed(1);
       const color=colors[catKeys.indexOf(cat)]||'#94a3b8';
-      return `<div class="bar-row"><div class="bar-lbl">${allCatsMap[cat]||cat}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="bar-amt">${fmt(val)}</div></div>`;
+      return `<div class="bar-block"><div class="bar-row" onclick="toggleCatDetail(this,'${cat}','${chartType}')"><div class="bar-lbl">${allCatsMap[cat]||cat}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="bar-amt">${fmt(val)}</div><span class="bar-chevron">▾</span></div><div class="cat-detail" style="display:none"></div></div>`;
     }).join('');
   }
 
@@ -1112,22 +1388,190 @@ function render(){
   /* Compromisos tab */
   renderCompromisos(selY,selM);
 
-  /* Movimientos tab */
+  /* Gastos tab */
   renderMovimientos();
 
-  /* Calendar if active */
-  if(currentView==='calendario') renderCalendar();
+  /* Ingresos tab */
+  renderIngresos();
+
+  /* Calendar — always keep in sync */
+  renderCalendar();
+
+  /* Flujo timeline — solo cuando está activo */
+  if(currentView==='flujo') renderCashflowTimeline();
 }
 
+/* ── Flujo de Caja — detecta período desde patrón de ingresos ── */
+function detectCurrentPeriodFromData(){
+  const entries=loadEntries();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+
+  const allIncomes=entries
+    .filter(e=>(e.type||'expense')==='income')
+    .map(e=>({...e,dateObj:new Date(e.date+'T12:00:00')}))
+    .sort((a,b)=>a.dateObj-b.dateObj);
+  if(!allIncomes.length) return null;
+
+  // ── Detectar días-de-cobro del historial ──
+  // Contar cuántas veces aparece cada día-del-mes en los ingresos
+  const dayCounts={};
+  for(const inc of allIncomes){
+    const d=inc.dateObj.getDate();
+    dayCounts[d]=(dayCounts[d]||0)+1;
+  }
+  const maxCount=Math.max(...Object.values(dayCounts));
+  // Días "reales de cobro": aparecen en al menos la mitad de los meses con ingresos
+  // (filtra ingresos eventuales/freelance que no definen el período)
+  let payDays=Object.keys(dayCounts)
+    .filter(d=>dayCounts[d]>=Math.max(2,Math.ceil(maxCount/2)))
+    .map(Number).sort((a,b)=>a-b);
+  // Si hay pocos datos (primer mes), usar todos los días con ingreso
+  if(!payDays.length) payDays=Object.keys(dayCounts).map(Number).sort((a,b)=>a-b);
+
+  const todayDay=today.getDate(), todayM=today.getMonth(), todayY=today.getFullYear();
+
+  // ── Inicio del período: día de cobro más reciente en o antes de hoy ──
+  let periodStart, nextPaymentDate;
+  const recentPayDay=[...payDays].reverse().find(d=>d<=todayDay);
+
+  if(recentPayDay){
+    // El cobro de este período fue en este mismo mes
+    periodStart=new Date(todayY,todayM,recentPayDay);
+    const nextPayDay=payDays.find(d=>d>todayDay);
+    nextPaymentDate=nextPayDay
+      ? new Date(todayY,todayM,nextPayDay)
+      : new Date(todayM+1>11?todayY+1:todayY, todayM+1>11?0:todayM+1, payDays[0]);
+  } else {
+    // Aún no hubo cobro este mes → el período viene del mes anterior
+    const pm=todayM-1<0?11:todayM-1;
+    const py=todayM-1<0?todayY-1:todayY;
+    const dim=new Date(py,pm+1,0).getDate(); // días en el mes anterior
+    const lastPayDay=[...payDays].reverse().find(d=>d<=dim)||payDays[payDays.length-1];
+    periodStart=new Date(py,pm,Math.min(lastPayDay,dim));
+    nextPaymentDate=new Date(todayY,todayM,payDays[0]);
+  }
+
+  const periodEnd=new Date(nextPaymentDate.getTime()-86400000);
+
+  // ── Ingreso del período = suma de TODOS los ingresos en [periodStart, periodEnd] ──
+  const periodAmount=allIncomes.filter(e=>{
+    const d=new Date(e.dateObj.getFullYear(),e.dateObj.getMonth(),e.dateObj.getDate());
+    return d>=periodStart&&d<=periodEnd;
+  }).reduce((s,e)=>s+ +e.amount,0);
+
+  const daysToNext=Math.max(1,Math.round((nextPaymentDate-today)/86400000));
+  return {periodStart,periodEnd,periodAmount,nextPaymentDate,daysToNext};
+}
+
+function getFlowPendingCommitments(periodStart,periodEnd){
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const fromDate=new Date(today.getTime()+86400000);
+  if(fromDate>periodEnd) return [];
+  const obls=loadObligations().filter(o=>o.active!==false);
+  const fixeds=loadFixed().filter(f=>f.active!==false);
+  const pending=[];
+  const months=new Set();
+  let cur=new Date(fromDate.getFullYear(),fromDate.getMonth(),1);
+  const endM=new Date(periodEnd.getFullYear(),periodEnd.getMonth(),1);
+  while(cur<=endM){months.add(`${cur.getFullYear()}-${cur.getMonth()+1}`);cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);}
+  for(const ym of months){
+    const[y,m]=ym.split('-').map(Number);
+    const dim=new Date(y,m,0).getDate();
+    for(const o of obls){
+      if(isOblPaid(o.id,y,m)) continue;
+      const dd=Math.min(o.dueDay||1,dim);
+      const d=new Date(y,m-1,dd);
+      if(d>=fromDate&&d<=periodEnd) pending.push({name:o.name,amount:+o.monthlyPayment,date:d,color:'var(--purple)'});
+    }
+    for(const f of fixeds){
+      if(isFixedPaid(f.id,y,m)) continue;
+      const dd=Math.min(f.dueDay||1,dim);
+      const d=new Date(y,m-1,dd);
+      if(d>=fromDate&&d<=periodEnd) pending.push({name:f.name,amount:+f.amount,date:d,color:'var(--accent2)'});
+    }
+  }
+  pending.sort((a,b)=>a.date-b.date);
+  return pending;
+}
+
+function renderFlowControl(){
+  const el=document.getElementById('disp-body');
+  const fmtD=d=>`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('disp-period').textContent='';
+
+  const period=detectCurrentPeriodFromData();
+  if(!period){
+    el.innerHTML=`<div class="flow-empty">No tenés ingresos registrados.<br><span style="font-size:0.75rem">Agregá tu primer ingreso para activar el flujo de caja.</span></div>`;
+    return;
+  }
+
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const allEntries=loadEntries();
+  const periodEntries=allEntries.filter(e=>{
+    const d=new Date(e.date+'T12:00:00');
+    return d>=period.periodStart&&d<=new Date(today.getTime()+86399999);
+  });
+  const yaGastaste=periodEntries.filter(e=>(e.type||'expense')==='expense').reduce((s,e)=>s+ +e.amount,0);
+  const pendingItems=getFlowPendingCommitments(period.periodStart,period.periodEnd);
+  const comprometido=pendingItems.reduce((s,p)=>s+p.amount,0);
+  const disponibleReal=period.periodAmount-yaGastaste-comprometido;
+  const totalUsed=yaGastaste+comprometido;
+  const pctUsed=period.periodAmount>0?Math.min(100,totalUsed/period.periodAmount*100):0;
+  const dailyBudget=period.daysToNext>0&&disponibleReal>0?disponibleReal/period.daysToNext:0;
+  const dispColor=disponibleReal>=0?'var(--green)':'var(--red)';
+  const barColor=pctUsed<70?'var(--green)':pctUsed<90?'var(--yellow)':'var(--red)';
+  const barStatus=pctUsed<70?'En control':pctUsed<90?'Atención':disponibleReal<0?'Excedido':'Al límite';
+
+  const pendingHTML=comprometido>0
+    ? `<div class="flow-row"><span class="flow-row-lbl"><div class="flow-row-dot" style="background:var(--yellow)"></div>Comprometido pendiente</span><span style="color:var(--yellow)">−${fmt(comprometido)}</span></div>`
+      +pendingItems.map(p=>`<div class="flow-pending-item"><span style="color:${p.color}">${esc(p.name)}<span style="color:var(--muted2);margin-left:4px">· ${fmtD(p.date)}</span></span><span style="color:${p.color}">−${fmt(p.amount)}</span></div>`).join('')
+    : '';
+
+  el.innerHTML=`
+    <div class="flow-hero">
+      <div class="flow-hero-lbl">Disponible Real</div>
+      <div class="flow-hero-val" style="color:${dispColor}">${fmt(disponibleReal)}</div>
+      ${dailyBudget>0
+        ?`<div class="flow-hero-sub">~${fmt(dailyBudget)}/día · ${period.daysToNext} día${period.daysToNext!==1?'s':''} hasta el próximo pago</div>`
+        :disponibleReal<0
+          ?`<div class="flow-hero-sub" style="color:var(--red)">Excediste en ${fmt(Math.abs(disponibleReal))}</div>`
+          :''}
+    </div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span class="flow-period-pill">Período activo: ${fmtD(period.periodStart)} → ${fmtD(period.periodEnd)}</span>
+    </div>
+    <div class="flow-metrics">
+      <div class="flow-metric"><div class="flow-metric-lbl">Ingreso del período</div><div class="flow-metric-val" style="color:var(--green)">${fmt(period.periodAmount)}</div></div>
+      <div class="flow-metric"><div class="flow-metric-lbl">Ya gastaste</div><div class="flow-metric-val" style="color:var(--red)">${fmt(yaGastaste)}</div></div>
+      <div class="flow-metric"><div class="flow-metric-lbl">Comprometido</div><div class="flow-metric-val" style="color:var(--yellow)">${fmt(comprometido)}</div></div>
+      <div class="flow-metric"><div class="flow-metric-lbl">Días hasta pago</div><div class="flow-metric-val" style="color:var(--accent2)">${period.daysToNext}</div></div>
+    </div>
+    <div class="flow-prog-wrap">
+      <div class="flow-prog"><div class="flow-prog-fill" style="width:${pctUsed.toFixed(1)}%;background:${barColor}"></div></div>
+      <div class="flow-prog-labels"><span>${pctUsed.toFixed(0)}% utilizado</span><span style="color:${barColor};font-weight:600">${barStatus}</span></div>
+    </div>
+    <div class="flow-breakdown">
+      <div class="flow-row"><span class="flow-row-lbl"><div class="flow-row-dot" style="background:var(--green)"></div>Ingreso del período</span><span style="color:var(--green)">+${fmt(period.periodAmount)}</span></div>
+      <div class="flow-row"><span class="flow-row-lbl"><div class="flow-row-dot" style="background:var(--red)"></div>Ya gastaste</span><span style="color:var(--red)">−${fmt(yaGastaste)}</span></div>
+      ${pendingHTML}
+      <div class="flow-row"><span>Disponible real</span><span style="color:${dispColor}">${fmt(disponibleReal)}</span></div>
+    </div>
+    <div style="text-align:right;margin-top:8px;font-size:0.67rem;color:var(--muted2)">
+      Basado en el ingreso del ${fmtD(period.periodStart)} · próximo pago ${fmtD(period.nextPaymentDate)}
+    </div>`;
+}
+
+
 function renderHealth(periodEntries, selM, selY){
-  const inc  = sumBy(periodEntries,'income');
-  const exp  = sumBy(periodEntries,'expense');
+  const inc    = sumBy(periodEntries,'income');
+  const exp    = sumBy(periodEntries,'expense');
+  const varExp = periodEntries.filter(e=>(e.type||'expense')==='expense'&&!e.commitId).reduce((s,e)=>s+ +e.amount,0);
   const obls = loadObligations().filter(o=>o.active!==false);
   const fxs  = loadFixed().filter(f=>f.active!==false);
   const oblTotal = obls.reduce((s,o)=>s+ +o.monthlyPayment,0);
   const fxTotal  = fxs.reduce((s,f)=>s+ +f.amount,0);
   const commitTotal = oblTotal+fxTotal;
-  const totalOut = exp+commitTotal;
+  const totalOut = exp;   // exp ya incluye pagos de compromisos — no sumar commitTotal de nuevo
   const balance  = inc-totalOut;
 
   document.getElementById('health-period-lbl').textContent = MONTHS[selM-1]+' '+selY;
@@ -1138,7 +1582,7 @@ function renderHealth(periodEntries, selM, selY){
     score=0;
   } else {
     const commitRatio = commitTotal/inc*100;
-    const expRatio    = exp/inc*100;
+    const expRatio    = varExp/inc*100;
     const savingsRate = (inc-totalOut)/inc*100;
     if(balance<0)      score -= 35;
     if(commitRatio>30) score -= Math.min(35, (commitRatio-30)*1.0);
@@ -1181,7 +1625,7 @@ function renderHealth(periodEntries, selM, selY){
 
   // ── Métricas ──
   const commitRatioPct = inc>0 ? Math.round(commitTotal/inc*100) : 0;
-  const expRatioPct    = inc>0 ? Math.round(exp/inc*100) : 0;
+  const expRatioPct    = inc>0 ? Math.round(varExp/inc*100) : 0;
   const savPct         = inc>0 ? Math.round((inc-totalOut)/inc*100) : 0;
   const metrics = [
     { lbl:'Tasa de ahorro',    val: inc>0?(savPct+'%'):'—',  sub:'Meta recomendada: ≥10%',  col: savPct>=10?'var(--green)':savPct>=0?'var(--yellow)':'var(--red)' },
@@ -1244,113 +1688,509 @@ function renderHealth(periodEntries, selM, selY){
     : '';
 }
 
+/* ── Edit commitment ── */
+let editCommitId=null, editCommitType=null;
+function openEditCommit(id,type){
+  editCommitId=id; editCommitType=type;
+  const isObl=type==='obl';
+  document.getElementById('ec-obl-fields').style.display=isObl?'block':'none';
+  document.getElementById('ec-fx-fields').style.display=isObl?'none':'block';
+  document.getElementById('ec-to-var-btn').style.display=isObl?'none':'inline-block';
+  if(isObl){
+    const obl=loadObligations().find(o=>o.id===id); if(!obl) return;
+    document.getElementById('ec-title').textContent='Editar Obligación';
+    document.getElementById('ec-name').value=obl.name;
+    document.getElementById('ec-type').value=OBL_TYPES[obl.type]?obl.type:'other';
+    document.getElementById('ec-monthly').value=obl.monthlyPayment;
+    document.getElementById('ec-total').value=obl.totalDebt||'';
+    document.getElementById('ec-remaining').value=obl.remainingDebt||'';
+    document.getElementById('ec-dueday').value=obl.dueDay||'';
+    document.getElementById('ec-note').value=obl.note||'';
+    document.getElementById('ec-save-btn').className='btn pur md full';
+  } else {
+    const fx=loadFixed().find(f=>f.id===id); if(!fx) return;
+    document.getElementById('ec-title').textContent='Editar Gasto Fijo';
+    document.getElementById('ec-name').value=fx.name;
+    document.getElementById('ec-amount').value=fx.amount;
+    populateCatSelect(document.getElementById('ec-category'),'expense',fx.category);
+    document.getElementById('ec-dueday').value=fx.dueDay||'';
+    document.getElementById('ec-note').value=fx.note||'';
+    document.getElementById('ec-save-btn').className='btn exp md full';
+  }
+  document.getElementById('modal-edit-commit').classList.add('open');
+}
+function syncLinkedEntryDates(commitId, commitType, newDueDay){
+  if(!newDueDay) return;
+  const m=+monthSel.value, y=+yearSel.value;
+  const prefix=`${y}-${String(m).padStart(2,'0')}`;
+  const newDate=`${prefix}-${String(newDueDay).padStart(2,'0')}`;
+  const all=loadEntries(); let changed=false;
+  all.forEach(e=>{
+    if(e.commitId===commitId&&e.commitType===commitType&&e.date&&e.date.startsWith(prefix)){
+      e.date=newDate; changed=true;
+    }
+  });
+  if(changed) saveEntries(all);
+}
+function saveEditCommit(){
+  const name=document.getElementById('ec-name').value.trim();
+  if(!name){showToast('El nombre es requerido','var(--yellow)');return;}
+  const newDueDay=+document.getElementById('ec-dueday').value||null;
+  if(editCommitType==='obl'){
+    const monthly=+document.getElementById('ec-monthly').value;
+    if(!monthly){showToast('El pago mensual es requerido','var(--yellow)');return;}
+    const obls=loadObligations(); const idx=obls.findIndex(o=>o.id===editCommitId); if(idx<0) return;
+    obls[idx]={...obls[idx],name,type:document.getElementById('ec-type').value,monthlyPayment:monthly,totalDebt:+document.getElementById('ec-total').value||obls[idx].totalDebt,remainingDebt:+document.getElementById('ec-remaining').value||obls[idx].remainingDebt,dueDay:newDueDay,note:document.getElementById('ec-note').value.trim()};
+    saveObligations(obls);
+    syncLinkedEntryDates(editCommitId,'obl',newDueDay);
+  } else {
+    const amount=+document.getElementById('ec-amount').value;
+    if(!amount){showToast('El monto es requerido','var(--yellow)');return;}
+    const fixed=loadFixed(); const idx=fixed.findIndex(f=>f.id===editCommitId); if(idx<0) return;
+    fixed[idx]={...fixed[idx],name,amount,category:document.getElementById('ec-category').value,dueDay:newDueDay,note:document.getElementById('ec-note').value.trim()};
+    saveFixed(fixed);
+    syncLinkedEntryDates(editCommitId,'fx',newDueDay);
+  }
+  calSelectedDay=null;
+  closeModal('modal-edit-commit'); showToast('Cambios guardados','var(--green)'); render();
+}
+
 function renderCompromisos(selY,selM){
   const obls=loadObligations().filter(o=>o.active!==false);
-  const fixed=loadFixed().filter(f=>f.active!==false);
-  const allCatsMap={...EXPENSE_CATS,...INCOME_CATS};
-
   const paidObls=obls.filter(o=>isOblPaid(o.id,selY,selM));
   const overdueObls=obls.filter(o=>!isOblPaid(o.id,selY,selM)&&isOverdue(o,selY,selM));
   const pendingObls=obls.filter(o=>!isOblPaid(o.id,selY,selM)&&!isOverdue(o,selY,selM));
-  const paidFx=fixed.filter(f=>isFixedPaid(f.id,selY,selM));
-  const overdueFx=fixed.filter(f=>!isFixedPaid(f.id,selY,selM)&&isFixedOverdue(f,selY,selM));
-  const pendingFx=fixed.filter(f=>!isFixedPaid(f.id,selY,selM)&&!isFixedOverdue(f,selY,selM));
 
-  const totalPaid=[...paidObls,...paidFx].reduce((s,x)=>s+ +(x.monthlyPayment||x.amount),0);
-  const totalPending=[...pendingObls,...pendingFx].reduce((s,x)=>s+ +(x.monthlyPayment||x.amount),0);
-  const totalOverdue=[...overdueObls,...overdueFx].reduce((s,x)=>s+ +(x.monthlyPayment||x.amount),0);
-  const totalPaidCount=paidObls.length+paidFx.length;
-  const totalPendCount=pendingObls.length+pendingFx.length;
-  const totalOverCount=overdueObls.length+overdueFx.length;
+  const totalPaid=paidObls.reduce((s,o)=>s+ +o.monthlyPayment,0);
+  const totalPending=pendingObls.reduce((s,o)=>s+ +o.monthlyPayment,0);
+  const totalOverdue=overdueObls.reduce((s,o)=>s+ +o.monthlyPayment,0);
 
   document.getElementById('commit-summary').innerHTML=`
-    <div class="sum-cell green"><div class="sum-lbl">Pagado</div><div class="sum-val" style="color:var(--green)">${fmt(totalPaid)}</div><div class="sum-cnt">${totalPaidCount} ítem${totalPaidCount!==1?'s':''}</div></div>
-    <div class="sum-cell accent"><div class="sum-lbl">Pendiente</div><div class="sum-val" style="color:var(--accent2)">${fmt(totalPending)}</div><div class="sum-cnt">${totalPendCount} ítem${totalPendCount!==1?'s':''}</div></div>
-    <div class="sum-cell red"><div class="sum-lbl">Vencido</div><div class="sum-val" style="color:var(--red)">${fmt(totalOverdue)}</div><div class="sum-cnt">${totalOverCount} ítem${totalOverCount!==1?'s':''}</div></div>`;
+    <div class="sum-cell green"><div class="sum-lbl">Pagado</div><div class="sum-val" style="color:var(--green)">${fmt(totalPaid)}</div><div class="sum-cnt">${paidObls.length} obligación${paidObls.length!==1?'es':''}</div></div>
+    <div class="sum-cell accent"><div class="sum-lbl">Pendiente</div><div class="sum-val" style="color:var(--accent2)">${fmt(totalPending)}</div><div class="sum-cnt">${pendingObls.length} obligación${pendingObls.length!==1?'es':''}</div></div>
+    <div class="sum-cell red"><div class="sum-lbl">Vencido</div><div class="sum-val" style="color:var(--red)">${fmt(totalOverdue)}</div><div class="sum-cnt">${overdueObls.length} obligación${overdueObls.length!==1?'es':''}</div></div>`;
 
-  /* Fixed section */
-  document.getElementById('fixed-meta').textContent=fixed.length?`${paidFx.length}/${fixed.length} pagados · ${fmt(fixed.reduce((s,f)=>s+ +f.amount,0))}/mes`:'Sin gastos fijos';
-  const fixedEl=document.getElementById('fixed-list');
-  if(!fixed.length){
-    fixedEl.innerHTML=`<div class="empty-state"><p>No hay gastos fijos. <a href="#" onclick="openManageFixed();return false" style="color:var(--accent2)">Agregar</a></p></div>`;
-  } else {
-    let h='';
-    const groups=[{label:'Vencidos',color:'var(--red)',items:overdueFx},{label:'Pendientes',color:'var(--accent2)',items:pendingFx},{label:'Pagados este mes',color:'var(--green)',items:paidFx}];
-    for(const g of groups){
-      if(!g.items.length) continue;
-      h+=`<div class="commit-section-lbl" style="color:${g.color}">${g.label}</div>`;
-      h+=g.items.map(f=>{
-        const paid=isFixedPaid(f.id,selY,selM), over=isFixedOverdue(f,selY,selM);
-        const sc=paid?'sp-paid':over?'sp-overdue':'sp-pending';
-        const st=paid?'Pagado':over?'Vencido':'Pendiente';
-        const color=paid?'var(--green)':over?'var(--red)':'var(--accent2)';
-        const payBtn=!paid?`<button class="btn pay sm" onclick="registerFixedPayment('${f.id}')">Registrar pago</button>`:'';
-        return commitItemHTML(f.name,`${allCatsMap[f.category]||f.category}${f.dueDay?` · Día ${f.dueDay}`:''}`,f.amount,color,sc,st,payBtn);
-      }).join('');
-    }
-    fixedEl.innerHTML=h;
-  }
-
-  /* Obligations section */
   document.getElementById('obl-meta').textContent=obls.length?`${paidObls.length}/${obls.length} pagadas · ${fmt(obls.reduce((s,o)=>s+ +o.monthlyPayment,0))}/mes`:'Sin obligaciones';
   const oblEl=document.getElementById('obl-list');
   if(!obls.length){
     oblEl.innerHTML=`<div class="empty-state"><p>No hay obligaciones. <a href="#" onclick="openObligationsModal();return false" style="color:var(--purple)">Agregar</a></p></div>`;
-  } else {
-    let h='';
-    const groups=[{label:'Vencidas',color:'var(--red)',items:overdueObls},{label:'Pendientes',color:'var(--purple)',items:pendingObls},{label:'Pagadas este mes',color:'var(--green)',items:paidObls}];
-    for(const g of groups){
-      if(!g.items.length) continue;
-      h+=`<div class="commit-section-lbl" style="color:${g.color}">${g.label}</div>`;
-      h+=g.items.map(o=>{
-        const paid=isOblPaid(o.id,selY,selM), over=isOverdue(o,selY,selM);
-        const sc=paid?'sp-paid':over?'sp-overdue':'sp-pending';
-        const st=paid?'Pagada':over?'Vencida':'Pendiente';
-        const color=paid?'var(--green)':over?'var(--red)':'var(--purple)';
-        const payBtn=!paid?`<button class="btn pay sm" onclick="registerOblPayment('${o.id}')">Registrar pago</button>`:'';
-        return commitItemHTML(o.name,`${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}`,o.monthlyPayment,color,sc,st,payBtn);
-      }).join('');
-    }
-    oblEl.innerHTML=h;
+    return;
   }
+  let h='';
+  const groups=[{label:'Vencidas',color:'var(--red)',items:overdueObls},{label:'Pendientes',color:'var(--purple)',items:pendingObls},{label:'Pagadas este mes',color:'var(--green)',items:paidObls}];
+  for(const g of groups){
+    if(!g.items.length) continue;
+    h+=`<div class="commit-section-lbl" style="color:${g.color}">${g.label}</div>`;
+    h+=g.items.map(o=>{
+      const paid=isOblPaid(o.id,selY,selM), over=isOverdue(o,selY,selM);
+      const sc=paid?'sp-paid':over?'sp-overdue':'sp-pending';
+      const st=paid?'Pagada':over?'Vencida':'Pendiente';
+      const color=paid?'var(--green)':over?'var(--red)':'var(--purple)';
+      const payBtn=!paid?`<button class="btn pay sm" onclick="registerOblPayment('${o.id}')">Registrar pago</button>`:`<button class="btn ghost sm" style="font-size:0.72rem" onclick="revertPayment('${o.id}','obl')">↩ Devolver</button>`;
+      const editBtn=`<button class="btn ghost sm" style="padding:4px 8px;margin-left:4px" onclick="openEditCommit('${o.id}','obl')" title="Editar">✎</button>`;
+      return commitItemHTML(o.name,`${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}`,o.monthlyPayment,color,sc,st,payBtn,editBtn);
+    }).join('');
+  }
+  oblEl.innerHTML=h;
 }
 
+function renderIngresos(){
+  const allCatsMap={...getCats('expense'),...getCats('income')};
+  const entries=getPeriodEntries().filter(e=>(e.type||'expense')==='income')
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=entries.reduce((s,e)=>s+ +e.amount,0);
+  document.getElementById('inc-count').textContent=entries.length
+    ?`${entries.length} registro${entries.length!==1?'s':''} · +${fmt(total)}`:'';
+  const el=document.getElementById('inc-list');
+  if(!entries.length){
+    el.innerHTML='<div class="empty-state"><p>No hay ingresos registrados para este período</p></div>';
+    return;
+  }
+  el.innerHTML=entries.map(e=>txItemHTML(e,allCatsMap)).join('');
+}
+
+function txItemHTML(e, allCatsMap, extraBtns=''){
+  const t=e.type||'expense';
+  const sign=t==='income'?'+':'-';
+  const catCls=CAT_CLS[e.category]||'c-other';
+  return `<div class="tx-item">
+    <div class="tx-dot" style="background:${t==='income'?'var(--green)':'var(--red)'}"></div>
+    <div class="tx-info">
+      <div class="tx-desc">${esc(e.description)}</div>
+      <div class="tx-meta">
+        <span class="chip ${t}-chip">${t==='income'?'Ingreso':'Gasto'}</span>
+        <span class="chip ${catCls}" style="margin-left:3px;color:#fff">${allCatsMap[e.category]||e.category}</span>
+        &nbsp;${fmtDate(e.date)}${e.note?'&nbsp;· '+esc(e.note):''}
+      </div>
+    </div>
+    <div class="tx-right">
+      <div class="tx-amt ${t}">${sign}${fmt(e.amount)}</div>
+      <button class="btn neutral sm" onclick="openEdit('${e.id}')">Editar</button>
+      <button class="btn danger sm" onclick="deleteEntry('${e.id}')">✕</button>
+      ${extraBtns}
+    </div>
+  </div>`;
+}
 function renderMovimientos(){
   const filtered=getFiltered();
   const sorted=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const allCatsMap={...EXPENSE_CATS,...INCOME_CATS};
+  const allCatsMap={...getCats('expense'),...getCats('income')};
+  const m=+monthSel.value, y=+yearSel.value;
+  const periodPrefix=`${y}-${String(m).padStart(2,'0')}`;
+  const allFixed=loadFixed().filter(f=>f.active!==false);
   document.getElementById('tx-count').textContent=`${sorted.length} registro${sorted.length!==1?'s':''}`;
   const el=document.getElementById('tx-list');
-  if(!sorted.length){
-    el.innerHTML='<div class="empty-state"><p>No hay registros para este período</p></div>';
-    return;
+
+  const varExp=sorted.filter(e=>(e.type||'expense')==='expense'&&!e.commitId);
+
+  let html='';
+
+  /* ── Gastos fijos del mes ── */
+  if(allFixed.length){
+    const allEntries=loadEntries();
+    const fxPaidAmt=allFixed.filter(f=>isFixedPaid(f.id,y,m)).reduce((s,f)=>s+ +f.amount,0);
+    const fxTotal  =allFixed.reduce((s,f)=>s+ +f.amount,0);
+    html+=`<div class="tx-group-hdr"><span style="color:var(--accent2)">Gastos fijos</span><span class="tx-ghdr-total" style="color:var(--accent2)">-${fmt(fxPaidAmt)} <span style="opacity:.55;font-size:0.68rem">/ ${fmt(fxTotal)}</span></span></div>`;
+    html+=allFixed.map(f=>{
+      const paid=isFixedPaid(f.id,y,m);
+      const over=isFixedOverdue(f,y,m);
+      const revertBtn=`<button class="btn ghost sm" style="font-size:0.72rem;margin-left:4px" onclick="revertPayment('${f.id}','fx')">↩ Devolver</button>`;
+      if(paid){
+        const linked=allEntries.find(e=>e.commitId===f.id&&e.commitType==='fx'&&e.date&&e.date.startsWith(periodPrefix));
+        if(linked) return txItemHTML(linked,allCatsMap,revertBtn);
+        return `<div class="tx-item"><div class="tx-dot" style="background:var(--green)"></div><div class="tx-info"><div class="tx-desc">${esc(f.name)}</div><div class="tx-meta"><span class="chip exp-chip">Gasto fijo</span>&nbsp;<span style="color:var(--green);font-size:0.71rem">Pagado</span></div></div><div class="tx-right"><div class="tx-amt exp">-${fmt(f.amount)}</div>${revertBtn}</div></div>`;
+      }
+      const color=over?'var(--red)':'var(--accent2)';
+      const st=over?'Vencido':'Pendiente';
+      return `<div class="tx-item" style="opacity:.8"><div class="tx-dot" style="background:${color}"></div><div class="tx-info"><div class="tx-desc">${esc(f.name)}</div><div class="tx-meta"><span class="chip exp-chip">Gasto fijo</span>&nbsp;<span style="color:${color};font-size:0.71rem;font-weight:600">${st}${f.dueDay?` · Día ${f.dueDay}`:''}</span></div></div><div class="tx-right"><div class="tx-amt" style="color:${color}">-${fmt(f.amount)}</div><button class="btn pay sm" onclick="registerFixedPayment('${f.id}')">Pagar</button><button class="btn ghost sm" style="padding:4px 8px" onclick="openEditCommit('${f.id}','fx')" title="Editar">✎</button></div></div>`;
+    }).join('');
   }
-  el.innerHTML=sorted.map(e=>{
+
+  /* ── Gastos variables ── */
+  if(varExp.length){
+    const total=varExp.reduce((s,e)=>s+ +e.amount,0);
+    html+=`<div class="tx-group-hdr"><span style="color:var(--red)">Gastos variables</span><span class="tx-ghdr-total" style="color:var(--red)">-${fmt(total)}</span></div>`;
+    html+=varExp.map(e=>txItemHTML(e,allCatsMap,'')).join('');
+  }
+
+  el.innerHTML=html||'<div class="empty-state"><p>No hay registros para este período</p></div>';
+}
+
+/* ── Conversión fijo → variable desde el modal de editar ── */
+function convertFxToVariable(){
+  if(!editCommitId) return;
+  const selM=+monthSel.value, selY=+yearSel.value;
+  const fx=loadFixed().find(f=>f.id===editCommitId);
+  if(!fx) return;
+  const prefix=`${selY}-${String(selM).padStart(2,'0')}`;
+  const entries=loadEntries();
+  const idx=entries.findIndex(e=>e.commitId===editCommitId&&e.commitType==='fx'&&e.date&&e.date.startsWith(prefix));
+  if(idx>=0){
+    // Ya estaba pagado: desvincula la entrada, queda como gasto variable (no desaparece)
+    const copy={...entries[idx]};
+    delete copy.commitId; delete copy.commitType;
+    entries[idx]=copy;
+    saveEntries(entries);
+    localStorage.removeItem(fixedPaidKey(editCommitId,selY,selM));
+  } else {
+    // Pendiente: crea la entrada como gasto variable para que "se mueva" a esa sección
+    const dim=new Date(selY,selM,0).getDate();
+    const day=String(Math.min(fx.dueDay||1,dim)).padStart(2,'0');
+    const entry={id:Date.now().toString(),type:'expense',amount:+fx.amount,description:fx.name,category:fx.category||'other',date:`${prefix}-${day}`,note:fx.note||''};
+    saveEntries([...entries,entry]);
+  }
+  saveFixed(loadFixed().filter(f=>f.id!==editCommitId));
+  closeModal('modal-edit-commit');
+  showToast('Movido a gastos variables','var(--red)');
+  render();
+}
+
+/* ── Flujo de Caja Timeline ── */
+let cftFilter='all';
+
+function setCftFilter(f){
+  cftFilter=f;
+  ['all','q1','q2'].forEach(id=>{
+    const el=document.getElementById('cft-f-'+id);
+    if(el) el.className='cft-pill'+(f===id?' on':'');
+  });
+  renderCashflowTimeline();
+}
+
+function buildCashflowEvents(selM,selY){
+  const allEntries=loadEntries();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const obls=loadObligations().filter(o=>o.active!==false);
+  const fixeds=loadFixed().filter(f=>f.active!==false);
+  const dim=new Date(selY,selM,0).getDate();
+
+  let startDay=1, endDay=dim;
+  if(cftFilter==='q1') endDay=15;
+  else if(cftFilter==='q2') startDay=16;
+
+  const periodStart=new Date(selY,selM-1,startDay);
+  const periodEnd=new Date(selY,selM-1,endDay);
+  const events=[];
+  const paidKeys=new Set();
+
+  // 1. Transacciones reales en el período
+  for(const e of allEntries){
+    const d=new Date(e.date+'T12:00:00');
+    const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    if(dd<periodStart||dd>periodEnd) continue;
     const t=e.type||'expense';
-    const sign=t==='income'?'+':'-';
-    const catCls=CAT_CLS[e.category]||'c-other';
-    return `<div class="tx-item">
-      <div class="tx-dot" style="background:${t==='income'?'var(--green)':'var(--red)'}"></div>
-      <div class="tx-info">
-        <div class="tx-desc">${esc(e.description)}</div>
-        <div class="tx-meta">
-          <span class="chip ${t}-chip">${t==='income'?'Ingreso':'Gasto'}</span>
-          <span class="chip ${catCls}" style="margin-left:3px;color:#fff">${allCatsMap[e.category]||e.category}</span>
-          &nbsp;${fmtDate(e.date)}${e.note?'&nbsp;· '+esc(e.note):''}
+    events.push({date:dd,desc:e.description,income:t==='income'?+e.amount:0,expense:t==='expense'?+e.amount:0,status:'actual',id:e.id});
+    if(e.commitId) paidKeys.add(e.commitType+'_'+e.commitId);
+  }
+
+  // 2. Gastos fijos pendientes
+  for(const f of fixeds){
+    if(!f.dueDay) continue;
+    const dd=Math.min(f.dueDay,dim);
+    if(dd<startDay||dd>endDay) continue;
+    if(isFixedPaid(f.id,selY,selM)||paidKeys.has('fx_'+f.id)) continue;
+    events.push({date:new Date(selY,selM-1,dd),desc:f.name,income:0,expense:+f.amount,status:'pending',id:'pf_'+f.id});
+  }
+
+  // 3. Obligaciones pendientes
+  for(const o of obls){
+    if(!o.dueDay) continue;
+    const dd=Math.min(o.dueDay,dim);
+    if(dd<startDay||dd>endDay) continue;
+    if(isOblPaid(o.id,selY,selM)||paidKeys.has('obl_'+o.id)) continue;
+    events.push({date:new Date(selY,selM-1,dd),desc:o.name,income:0,expense:+o.monthlyPayment,status:'pending',id:'po_'+o.id});
+  }
+
+  // 4. Ingresos previstos (futuro, según patrón histórico)
+  const allIncs=allEntries.filter(e=>(e.type||'expense')==='income');
+  if(allIncs.length){
+    const dc={};
+    for(const inc of allIncs) dc[new Date(inc.date+'T12:00:00').getDate()]=(dc[new Date(inc.date+'T12:00:00').getDate()]||0)+1;
+    const maxC=Math.max(...Object.values(dc));
+    let pds=Object.keys(dc).filter(d=>dc[d]>=Math.max(2,Math.ceil(maxC/2))).map(Number);
+    if(!pds.length) pds=Object.keys(dc).map(Number);
+    for(const pd of pds.sort((a,b)=>a-b)){
+      const dd=Math.min(pd,dim);
+      if(dd<startDay||dd>endDay) continue;
+      const dateKey=`${selY}-${String(selM).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+      const dObj=new Date(selY,selM-1,dd);
+      if(dObj<=today) continue;
+      if(allEntries.some(e=>(e.type||'expense')==='income'&&e.date===dateKey)) continue;
+      const amounts=allIncs.filter(e=>new Date(e.date+'T12:00:00').getDate()===pd).map(e=>+e.amount);
+      const avg=Math.round(amounts.reduce((s,a)=>s+a,0)/amounts.length);
+      if(!avg) continue;
+      events.push({date:dObj,desc:`Ingreso previsto`,income:avg,expense:0,status:'predicted',id:'pred_'+dd});
+    }
+  }
+
+  events.sort((a,b)=>a.date-b.date||b.income-a.income);
+  return {events,startDay,endDay};
+}
+
+function getOpeningBalance(selM,selY,startDay){
+  // Suma todos los movimientos registrados ANTES del inicio del período
+  const cutoff=new Date(selY,selM-1,startDay);
+  let bal=0;
+  for(const e of loadEntries()){
+    const d=new Date(e.date+'T12:00:00');
+    const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    if(dd>=cutoff) continue;
+    const t=e.type||'expense';
+    if(t==='income') bal+= +e.amount;
+    else if(t==='expense') bal-= +e.amount;
+  }
+  return bal;
+}
+
+function renderCashflowTimeline(){
+  if(currentView!=='flujo') return;
+  const selM=+monthSel.value, selY=+yearSel.value;
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const {events,startDay,endDay}=buildCashflowEvents(selM,selY);
+
+  // Saldo de arrastre: lo que quedó de todos los períodos anteriores
+  const openBal=getOpeningBalance(selM,selY,startDay);
+
+  // Etiqueta del período
+  const mName=MONTHS[selM-1];
+  let label=`${mName} ${selY}`;
+  if(cftFilter==='q1') label=`1–15 ${mName} ${selY}`;
+  else if(cftFilter==='q2') label=`16–${endDay} ${mName} ${selY}`;
+  document.getElementById('cft-period-label').textContent=`Flujo · ${label}`;
+
+  // Balance corrido DESDE el saldo de arrastre
+  let balance=openBal, currentBal=openBal, pendingExpenses=0, pendingIncome=0;
+  let seenActual=false;
+  const rows=events.map(ev=>{
+    balance+=ev.income-ev.expense;
+    if(ev.status==='pending'||ev.status==='predicted'){
+      pendingExpenses+=ev.expense;
+      pendingIncome+=ev.income;
+    }
+    if(ev.status==='actual'){currentBal=balance; seenActual=true;}
+    return {...ev,bal:balance};
+  });
+  if(!seenActual) currentBal=openBal;
+  const pendingTotal=pendingExpenses; // para la card "Comprometido"
+  const projBal=balance;
+
+  // Próximo ingreso
+  let daysNext=null;
+  const allIncs=loadEntries().filter(e=>(e.type||'expense')==='income');
+  const futIncs=allIncs.filter(e=>new Date(e.date+'T12:00:00')>today).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(futIncs.length){
+    daysNext=Math.round((new Date(futIncs[0].date+'T12:00:00')-today)/86400000);
+  } else if(allIncs.length){
+    const dc={};
+    for(const inc of allIncs) dc[new Date(inc.date+'T12:00:00').getDate()]=(dc[new Date(inc.date+'T12:00:00').getDate()]||0)+1;
+    const maxC=Math.max(...Object.values(dc));
+    const pds=Object.keys(dc).filter(d=>dc[d]>=Math.max(2,Math.ceil(maxC/2))).map(Number).sort((a,b)=>a-b);
+    if(pds.length){
+      const td=today.getDate(),tm=today.getMonth(),ty=today.getFullYear();
+      const nd=pds.find(d=>d>td);
+      const nDate=nd?new Date(ty,tm,nd):new Date(tm+1>11?ty+1:ty,tm+1>11?0:tm+1,pds[0]);
+      daysNext=Math.max(1,Math.round((nDate-today)/86400000));
+    }
+  }
+
+  // Si el ingreso previsto cubre los compromisos, el saldo actual queda libre completo.
+  // Solo se le resta al saldo lo que el ingreso NO alcanza a cubrir.
+  const uncovered=Math.max(0,pendingExpenses-pendingIncome);
+  const disponible=currentBal-uncovered;
+  const dispColor=disponible>0?'var(--green)':disponible<0?'var(--red)':'var(--muted2)';
+  const openColor=openBal>=0?'var(--green)':'var(--red)';
+
+  document.getElementById('cft-summary').innerHTML=`
+    <div style="grid-column:1/-1;background:var(--s1);border:2px solid ${dispColor};border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);margin-bottom:4px">Podés gastar ahora mismo</div>
+        <div style="font-size:2.4rem;font-weight:900;line-height:1;color:${dispColor}">${fmt(disponible)}</div>
+        <div style="font-size:0.73rem;color:var(--muted2);margin-top:6px">
+          ${uncovered===0&&pendingIncome>0
+            ? `El ingreso previsto <strong style="color:var(--green)">${fmt(pendingIncome)}</strong> cubre todos tus compromisos — los <strong>${fmt(currentBal)}</strong> son libres`
+            : uncovered>0
+              ? `Saldo <strong style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</strong> &minus; ${fmt(uncovered)} que el ingreso no alcanza a cubrir`
+              : `Saldo actual <strong style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</strong>`}
         </div>
       </div>
-      <div class="tx-right">
-        <div class="tx-amt ${t}">${sign}${fmt(e.amount)}</div>
-        <button class="btn neutral sm" onclick="openEdit('${e.id}')">Editar</button>
-        <button class="btn danger sm" onclick="deleteEntry('${e.id}')">✕</button>
-      </div>
+      ${daysNext!==null?`<div style="text-align:right"><div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:3px">Próximo ingreso</div><div style="font-size:1.4rem;font-weight:800;color:var(--accent2)">${daysNext} día${daysNext!==1?'s':''}</div></div>`:''}
+    </div>
+    <div class="cft-sum-card" style="border-color:${openColor}">
+      <div class="cft-sum-lbl">Traés del período anterior</div>
+      <div class="cft-sum-val" style="color:${openColor}">${fmt(openBal)}</div>
+    </div>
+    <div class="cft-sum-card">
+      <div class="cft-sum-lbl">Saldo actual real</div>
+      <div class="cft-sum-val" style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</div>
+    </div>
+    <div class="cft-sum-card">
+      <div class="cft-sum-lbl">Comprometido pendiente</div>
+      <div class="cft-sum-val" style="color:var(--yellow)">${fmt(pendingTotal)}</div>
+    </div>
+    <div class="cft-sum-card">
+      <div class="cft-sum-lbl">Proyectado fin período</div>
+      <div class="cft-sum-val" style="color:${projBal>=0?'var(--accent2)':'var(--red)'}">${fmt(projBal)}</div>
     </div>`;
-  }).join('');
+
+  // Tabla
+  const tableEl=document.getElementById('cft-table');
+  const MN=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fmtD=d=>`${String(d.getDate()).padStart(2,'0')} ${MN[d.getMonth()]}`;
+
+  let html=`<thead><tr>
+    <th>Fecha</th><th>Descripción</th>
+    <th class="r">Ingreso</th><th class="r">Egreso</th><th class="r">Saldo</th>
+  </tr></thead><tbody>`;
+
+  // Fila de saldo de arrastre (siempre visible)
+  const openBalClass=openBal<0?'cft-bal-neg':openBal>0?'cft-bal-pos':'cft-bal-zero';
+  html+=`<tr style="background:var(--s2)">
+    <td class="cft-date-cell" style="color:var(--muted2)">—</td>
+    <td style="color:var(--muted);font-style:italic;font-size:0.79rem">Saldo anterior al período</td>
+    <td class="r"></td><td class="r"></td>
+    <td class="r ${openBalClass}">${fmt(openBal)}</td>
+  </tr>`;
+
+  if(!rows.length){
+    html+='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted2);font-size:0.82rem">Sin movimientos en este período</td></tr>';
+    tableEl.innerHTML=html+'</tbody>';
+    return;
+  }
+
+  let lastDate='', prevNeg=false;
+  for(const row of rows){
+    const dStr=row.date.toISOString().slice(0,10);
+    const isToday=row.date.getTime()===today.getTime();
+    const isPend=row.status==='pending'||row.status==='predicted';
+    const isNeg=row.bal<0;
+
+    let trClass=isPend?'cft-row-pending':'';
+    if(isToday) trClass+=(trClass?' ':'')+'cft-row-today';
+
+    const balClass=isNeg?'cft-bal-neg r':row.bal>0?'cft-bal-pos r':'cft-bal-zero r';
+    const todayTag=isToday?'<span class="cft-today-tag">HOY</span>':'';
+    const pendTag=row.status==='pending'?'<span class="cft-pend-tag">⏳ pendiente</span>':row.status==='predicted'?'<span class="cft-pend-tag">📅 previsto</span>':'';
+    const showDate=dStr!==lastDate; lastDate=dStr;
+
+    html+=`<tr class="${trClass}">
+      <td class="cft-date-cell">${showDate?fmtD(row.date):''}</td>
+      <td>${esc(row.desc)}${pendTag}${todayTag}</td>
+      <td class="r cft-inc">${row.income>0?'+'+fmt(row.income):''}</td>
+      <td class="r cft-exp">${row.expense>0?'−'+fmt(row.expense):''}</td>
+      <td class="${balClass}">${fmt(row.bal)}${isNeg?' ⚠':''}</td>
+    </tr>`;
+
+    // Barra de alerta al cruzar a negativo por primera vez
+    if(isNeg&&!prevNeg&&!isPend){
+      html+=`<tr class="cft-alert-bar"><td colspan="5">⚠ El saldo cae a negativo — revisá tus movimientos</td></tr>`;
+    }
+    prevNeg=isNeg;
+  }
+
+  // Fila de totales
+  const totalInc=rows.reduce((s,r)=>s+r.income,0);
+  const totalExp=rows.reduce((s,r)=>s+r.expense,0);
+  const netTotal=totalInc-totalExp;
+  const netColor=netTotal>0?'var(--green)':netTotal<0?'var(--red)':'var(--muted2)';
+  html+=`<tfoot><tr style="background:var(--s2);font-weight:700;font-size:0.83rem">
+    <td colspan="2" style="padding:8px 10px;color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em">Totales del período</td>
+    <td class="r cft-inc">${totalInc>0?'+'+fmt(totalInc):''}</td>
+    <td class="r cft-exp">${totalExp>0?'−'+fmt(totalExp):''}</td>
+    <td class="r" style="color:${netColor}">${netTotal>0?'+':''}${fmt(netTotal)}</td>
+  </tr></tfoot>`;
+
+  html+='</tbody>';
+  tableEl.innerHTML=html;
+}
+
+function openQuickExpense(){
+  const selM=+monthSel.value, selY=+yearSel.value;
+  const d=now.getMonth()+1===selM&&now.getFullYear()===selY
+    ? now.toISOString().slice(0,10)
+    : `${selY}-${String(selM).padStart(2,'0')}-01`;
+  document.getElementById('qe-date').value=d;
+  document.getElementById('qe-amount').value='';
+  document.getElementById('qe-desc').value='';
+  populateCatSelect(document.getElementById('qe-category'),'expense');
+  document.getElementById('modal-quick-exp').classList.add('open');
+  setTimeout(()=>document.getElementById('qe-amount').focus(),120);
+}
+
+function saveQuickExpense(){
+  const amount=+document.getElementById('qe-amount').value;
+  const desc=document.getElementById('qe-desc').value.trim();
+  const date=document.getElementById('qe-date').value;
+  if(!amount||!desc||!date){showToast('Completá todos los campos','var(--yellow)');return;}
+  const entry={id:Date.now().toString(),type:'expense',amount,description:desc,category:document.getElementById('qe-category').value,date,note:''};
+  saveEntries([...loadEntries(),entry]);
+  closeModal('modal-quick-exp');
+  showToast('Gasto agregado','var(--red)');
+  render();
 }
 
 /* ── View tabs ── */
 let currentView='resumen';
-const VIEWS=['resumen','compromisos','movimientos','calendario'];
+const VIEWS=['resumen','compromisos','gastos','ingresos','calendario','flujo'];
 function setView(v){
   currentView=v;
   VIEWS.forEach(id=>{
@@ -1358,6 +2198,7 @@ function setView(v){
     document.getElementById('view-'+id).style.display=v===id?'block':'none';
   });
   if(v==='calendario'){ calSelectedDay=null; renderCalendar(); }
+  if(v==='flujo') renderCashflowTimeline();
 }
 
 function toggleSection(id){
@@ -1401,7 +2242,7 @@ function deleteObligation(id){
 function registerOblPayment(oblId){
   const obl=loadObligations().find(o=>o.id===oblId); if(!obl) return;
   const selM=+monthSel.value, selY=+yearSel.value;
-  const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,description:`Pago: ${obl.name}`,category:'housing',date:`${selY}-${String(selM).padStart(2,'0')}-${String(obl.dueDay||1).padStart(2,'0')}`,note:OBL_TYPES[obl.type]||obl.type};
+  const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,description:`Pago: ${obl.name}`,category:'housing',date:`${selY}-${String(selM).padStart(2,'0')}-${String(obl.dueDay||1).padStart(2,'0')}`,note:OBL_TYPES[obl.type]||obl.type,commitId:oblId,commitType:'obl'};
   if(obl.totalDebt>0){const obls=loadObligations();const idx=obls.findIndex(o=>o.id===oblId);if(idx>=0){obls[idx].remainingDebt=Math.max(0,(obls[idx].remainingDebt||obls[idx].totalDebt)-obl.monthlyPayment);saveObligations(obls);}}
   const entries=loadEntries(); entries.push(entry); saveEntries(entries);
   setOblPaid(oblId,selY,selM);
@@ -1433,34 +2274,96 @@ function deleteFixed(id){
 function registerFixedPayment(fxId){
   const fx=loadFixed().find(f=>f.id===fxId); if(!fx) return;
   const selM=+monthSel.value, selY=+yearSel.value;
-  const entry={id:Date.now().toString(),type:'expense',amount:fx.amount,description:fx.name,category:fx.category,date:`${selY}-${String(selM).padStart(2,'0')}-${String(fx.dueDay||1).padStart(2,'0')}`,note:fx.note||'Gasto fijo mensual'};
+  const entry={id:Date.now().toString(),type:'expense',amount:fx.amount,description:fx.name,category:fx.category,date:`${selY}-${String(selM).padStart(2,'0')}-${String(fx.dueDay||1).padStart(2,'0')}`,note:fx.note||'Gasto fijo mensual',commitId:fxId,commitType:'fx'};
   const entries=loadEntries(); entries.push(entry); saveEntries(entries);
   setFixedPaid(fxId,selY,selM);
   showToast('Pago registrado','var(--green)'); render();
 }
 
+/* ── Category detail toggle ── */
+function toggleCatDetail(rowEl, cat, type){
+  const detail=rowEl.nextElementSibling; if(!detail) return;
+  const isOpen=detail.style.display!=='none';
+  rowEl.classList.toggle('open',!isOpen);
+  if(isOpen){detail.style.display='none'; return;}
+  const m=+monthSel.value, y=+yearSel.value;
+  const allCatsMap={...getCats('expense'),...getCats('income')};
+  const items=loadEntries().filter(e=>{
+    const d=new Date(e.date+'T12:00:00');
+    return d.getMonth()+1===m&&d.getFullYear()===y&&e.category===cat&&(e.type||'expense')===type;
+  }).sort((a,b)=>a.date.localeCompare(b.date));
+  const sign=type==='income'?'+':'-';
+  detail.innerHTML=items.length
+    ? items.map(e=>`<div class="cat-det-item"><span class="cat-det-date">${e.date.split('-')[2]}</span><span class="cat-det-desc">${esc(e.description)}</span><span class="cat-det-amt">${sign}${fmt(e.amount)}</span></div>`).join('')
+    : '<div class="cat-det-empty">Sin registros</div>';
+  detail.style.display='block';
+}
+
+/* ── Auto-link entry to matching unpaid commitment ── */
+function autoLinkToCommit(entry){
+  if((entry.type||'expense')!=='expense'||entry.commitId) return;
+  const d=new Date(entry.date+'T12:00:00');
+  const y=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
+  const obls=loadObligations().filter(o=>o.active!==false&&!isOblPaid(o.id,y,m));
+  // Requiere monto Y día exacto para evitar falsos positivos
+  const obl=obls.find(o=>+o.monthlyPayment===+entry.amount&&o.dueDay===day);
+  if(obl){
+    const all=loadEntries(); const i=all.findIndex(e=>e.id===entry.id);
+    if(i>=0){all[i].commitId=obl.id; all[i].commitType='obl'; saveEntries(all);} return;
+  }
+  const fixed=loadFixed().filter(f=>f.active!==false&&!isFixedPaid(f.id,y,m));
+  const fx=fixed.find(f=>+f.amount===+entry.amount&&f.dueDay===day);
+  if(fx){
+    const all=loadEntries(); const i=all.findIndex(e=>e.id===entry.id);
+    if(i>=0){all[i].commitId=fx.id; all[i].commitType='fx'; saveEntries(all);}
+  }
+}
+
 /* ── Entry CRUD ── */
 document.getElementById('entry-form').addEventListener('submit',ev=>{
   ev.preventDefault();
+  if(currentType==='obligation'){
+    const name=document.getElementById('f-desc').value.trim();
+    const monthly=+document.getElementById('f-amount').value;
+    if(!name||!monthly){showToast('Nombre y pago mensual requeridos','var(--yellow)');return;}
+    const tot=+document.getElementById('f-obl-total').value||0;
+    const obl={id:Date.now().toString(),name,type:document.getElementById('f-obl-type').value,monthlyPayment:monthly,totalDebt:tot,remainingDebt:tot,dueDay:+document.getElementById('f-obl-dueday').value||null,note:document.getElementById('f-note').value.trim(),active:true};
+    const data=loadObligations(); data.push(obl); saveObligations(data);
+    showToast('Obligación registrada','var(--purple)');
+    ev.target.reset();
+    render();
+    return;
+  }
   const entry={id:Date.now().toString(),type:currentType,amount:+document.getElementById('f-amount').value,description:document.getElementById('f-desc').value.trim(),category:document.getElementById('f-category').value,date:document.getElementById('f-date').value,note:document.getElementById('f-note').value.trim()};
   const data=loadEntries(); data.push(entry); saveEntries(data);
-  const isRecurring=document.getElementById('f-recurring').checked;
-  if(isRecurring&&currentType==='expense'){
+  if(expType==='fixed'&&currentType==='expense'){
     const fx={id:(Date.now()+1).toString(),name:entry.description,amount:entry.amount,category:entry.category,dueDay:+entry.date.split('-')[2]||null,note:entry.note,active:true};
     const fxData=loadFixed(); fxData.push(fx); saveFixed(fxData);
+    const allE=loadEntries(); const ei=allE.findIndex(e=>e.id===entry.id);
+    if(ei>=0){allE[ei].commitId=fx.id; allE[ei].commitType='fx'; saveEntries(allE);}
     showToast('Gasto fijo registrado','var(--accent)');
   } else {
+    autoLinkToCommit(entry);
     showToast(currentType==='income'?'Ingreso agregado':'Gasto agregado',currentType==='income'?'var(--green)':'var(--red)');
   }
   ev.target.reset();
-  document.getElementById('f-date').value=now.toISOString().split('T')[0];
+  document.getElementById('f-date').value=defaultFormDate();
   populateCatSelect(document.getElementById('f-category'),currentType);
-  document.getElementById('recur-lbl').classList.remove('on');
+  setExpType('variable');
+  render();
 });
 
 function deleteEntry(id){
   if(!confirm('¿Eliminar este registro?')) return;
-  saveEntries(loadEntries().filter(e=>e.id!==id));
+  const all=loadEntries();
+  const entry=all.find(e=>e.id===id);
+  saveEntries(all.filter(e=>e.id!==id));
+  if(entry&&entry.commitId&&entry.date){
+    const d=new Date(entry.date+'T12:00:00');
+    const y=d.getFullYear(), m=d.getMonth()+1;
+    if(entry.commitType==='obl') localStorage.removeItem(oblPaidKey(entry.commitId,y,m));
+    else if(entry.commitType==='fx') localStorage.removeItem(fixedPaidKey(entry.commitId,y,m));
+  }
   showToast('Eliminado','var(--red)'); render();
 }
 let editId=null;
@@ -1470,6 +2373,8 @@ function openEdit(id){
   document.getElementById('e-btn-exp').className='type-btn'+(editType==='expense'?' active-exp':'');
   document.getElementById('e-btn-inc').className='type-btn'+(editType==='income' ?' active-inc':'');
   document.getElementById('e-save-btn').className='btn '+(editType==='expense'?'exp':'inc')+' md full';
+  document.getElementById('e-exp-type-row').style.display=editType==='expense'?'block':'none';
+  setEditExpType(e.commitId&&e.commitType==='fx'?'fixed':'variable');
   populateCatSelect(document.getElementById('e-category'),editType,e.category);
   document.getElementById('e-amount').value=e.amount;
   document.getElementById('e-desc').value=e.description;
@@ -1479,7 +2384,24 @@ function openEdit(id){
 }
 function saveEdit(){
   const data=loadEntries(); const idx=data.findIndex(e=>e.id===editId); if(idx<0) return;
-  data[idx]={...data[idx],type:editType,amount:+document.getElementById('e-amount').value,description:document.getElementById('e-desc').value.trim(),category:document.getElementById('e-category').value,date:document.getElementById('e-date').value,note:document.getElementById('e-note').value.trim()};
+  const prev=data[idx];
+  const wasFx=!!(prev.commitId&&prev.commitType==='fx');
+  const nowFx=editType==='expense'&&editExpType==='fixed';
+  let updated={...prev,type:editType,amount:+document.getElementById('e-amount').value,description:document.getElementById('e-desc').value.trim(),category:document.getElementById('e-category').value,date:document.getElementById('e-date').value,note:document.getElementById('e-note').value.trim()};
+  if(wasFx&&!nowFx){
+    // Fijo → Variable: desvincula el gasto fijo
+    if(prev.commitId&&prev.date){const d=new Date(prev.date+'T12:00:00');localStorage.removeItem(fixedPaidKey(prev.commitId,d.getFullYear(),d.getMonth()+1));}
+    delete updated.commitId; delete updated.commitType;
+  } else if(!wasFx&&nowFx){
+    // Variable → Fijo: crea gasto fijo y vincula
+    const fx={id:(Date.now()+1).toString(),name:updated.description,amount:updated.amount,category:updated.category,dueDay:+updated.date.split('-')[2]||null,note:updated.note,active:true};
+    saveFixed([...loadFixed(),fx]);
+    updated.commitId=fx.id; updated.commitType='fx';
+    const d=new Date(updated.date+'T12:00:00');
+    setFixedPaid(fx.id,d.getFullYear(),d.getMonth()+1);
+    showToast('Gasto fijo creado y vinculado','var(--accent2)');
+  }
+  data[idx]=updated;
   saveEntries(data); closeModal('modal-edit'); showToast('Actualizado'); render();
 }
 
@@ -1496,9 +2418,9 @@ function shiftMonth(delta){
   let found=false;
   for(const opt of yearSel.options){if(+opt.value===y){opt.selected=true;found=true;break;}}
   if(!found){const o=document.createElement('option');o.value=y;o.textContent=y;o.selected=true;yearSel.appendChild(o);}
-  calSelectedDay=null; render();
+  calSelectedDay=null; render(); document.getElementById('f-date').value=defaultFormDate();
 }
-function goToToday(){ monthSel.value=now.getMonth()+1; yearSel.value=now.getFullYear(); calSelectedDay=null; render(); }
+function goToToday(){ monthSel.value=now.getMonth()+1; yearSel.value=now.getFullYear(); calSelectedDay=null; render(); document.getElementById('f-date').value=defaultFormDate(); }
 
 /* ── Quick-add from calendar ── */
 let qaDay=null, qaTab='entry', qaType='expense';
@@ -1548,9 +2470,10 @@ function saveQuickAdd(){
     if(!amount||!desc){ showToast('Monto y descripción requeridos','var(--yellow)'); return; }
     const entry={id:Date.now().toString(),type:qaType,amount,description:desc,category:document.getElementById('qa-category').value,date:document.getElementById('qa-date').value,note:document.getElementById('qa-note').value.trim()};
     saveEntries([...loadEntries(),entry]);
+    autoLinkToCommit(entry);
     showToast(qaType==='income'?'Ingreso agregado':'Gasto agregado',qaType==='income'?'var(--green)':'var(--red)');
   }
-  closeModal('modal-quick-add'); render(); renderCalendar(); selectCalDay(qaDay);
+  closeModal('modal-quick-add'); calSelectedDay=qaDay; render();
 }
 
 /* ── Calendar ── */
@@ -1573,8 +2496,10 @@ function renderCalendar(){
     const dayObls=obls.filter(o=>o.dueDay===d);
     const dayFx=fixedList.filter(f=>f.dueDay===d);
     const dayEntries=entryMap[d]||[];
-    const incCnt=dayEntries.filter(e=>(e.type||'expense')==='income').length;
-    const expCnt=dayEntries.filter(e=>(e.type||'expense')==='expense').length;
+    const commitIds=new Set([...dayObls.map(o=>o.id),...dayFx.map(f=>f.id)]);
+    const freeEntries=dayEntries.filter(e=>!e.commitId||!commitIds.has(e.commitId));
+    const incCnt=freeEntries.filter(e=>(e.type||'expense')==='income').length;
+    const expCnt=freeEntries.filter(e=>(e.type||'expense')==='expense').length;
     let cls='cal-day'+(isToday?' today':'')+(calSelectedDay===d?' sel':'');
     let badges='';
     for(const o of dayObls){
@@ -1602,24 +2527,42 @@ function showCalDetail(d){
   const obls=loadObligations().filter(o=>o.active!==false&&o.dueDay===d);
   const fixedDay=loadFixed().filter(f=>f.active!==false&&f.dueDay===d);
   const entries=loadEntries().filter(e=>{const dt=new Date(e.date+'T12:00:00');return dt.getDate()===d&&dt.getMonth()+1===m&&dt.getFullYear()===y;});
-  const allCatsMap={...EXPENSE_CATS,...INCOME_CATS};
-  let html=`<div class="cal-detail"><div class="cal-det-title">${d} de ${MONTHS[m-1]} de ${y}</div>`;
-  if(!obls.length&&!fixedDay.length&&!entries.length) html+='<div class="cal-det-empty">Sin eventos este día</div>';
+  const allCatsMap={...getCats('expense'),...getCats('income')};
+  const shownCommitIds=new Set([...obls.map(o=>o.id),...fixedDay.map(f=>f.id)]);
+  const freeEntries=entries.filter(e=>!e.commitId||!shownCommitIds.has(e.commitId));
+  // Totales del día
+  const totalInc=freeEntries.filter(e=>(e.type||'expense')==='income').reduce((s,e)=>s+ +e.amount,0);
+  const totalExp=freeEntries.filter(e=>(e.type||'expense')==='expense').reduce((s,e)=>s+ +e.amount,0)
+    +obls.reduce((s,o)=>s+ +o.monthlyPayment,0)
+    +fixedDay.reduce((s,f)=>s+ +f.amount,0);
+  const netDay=totalInc-totalExp;
+  const hasItems=obls.length||fixedDay.length||freeEntries.length;
+
+  let html=`<div class="cal-detail">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div class="cal-det-title" style="margin-bottom:0">${d} de ${MONTHS[m-1]} de ${y}</div>
+      ${hasItems?`<div style="display:flex;gap:8px;font-size:0.78rem;font-weight:700;flex-shrink:0">
+        ${totalInc>0?`<span style="color:var(--green)">+${fmt(totalInc)}</span>`:''}
+        ${totalExp>0?`<span style="color:var(--red)">−${fmt(totalExp)}</span>`:''}
+        <span style="color:${netDay>=0?'var(--green)':'var(--red)'};border-left:1px solid var(--border);padding-left:8px">${netDay>=0?'+':''}${fmt(netDay)}</span>
+      </div>`:''}
+    </div>`;
+  if(!hasItems) html+='<div class="cal-det-empty">Sin eventos este día</div>';
   for(const o of obls){
     const paid=isOblPaid(o.id,y,m), over=isOverdue(o,y,m);
     const color=paid?'var(--green)':over?'var(--red)':'var(--purple)';
     const st=paid?'Pagada':over?'Vencida':'Pendiente';
-    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name"><strong>${esc(o.name)}</strong> <span style="color:var(--muted2)">${OBL_TYPES[o.type]||o.type}</span></div><span style="font-size:0.72rem;color:${color};font-weight:700;margin-right:6px">${st}</span><div class="cal-det-amt" style="color:${color}">${fmt(o.monthlyPayment)}</div>${!paid?`<button class="btn pay sm" onclick="registerOblPayment('${o.id}')">Pagar</button>`:''}</div>`;
+    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name"><strong>${esc(o.name)}</strong> <span style="color:var(--muted2)">${OBL_TYPES[o.type]||o.type}</span></div><span style="font-size:0.72rem;color:${color};font-weight:700;margin-right:6px">${st}</span><div class="cal-det-amt" style="color:${color}">${fmt(o.monthlyPayment)}</div>${!paid?`<button class="btn pay sm" onclick="registerOblPayment('${o.id}')">Pagar</button>`:`<button class="btn ghost sm" style="font-size:0.72rem" onclick="revertPayment('${o.id}','obl')">↩ Devolver</button>`}<button class="btn ghost sm" style="padding:4px 8px;margin-left:4px" onclick="openEditCommit('${o.id}','obl')" title="Editar">✎</button></div>`;
   }
   for(const f of fixedDay){
     const paid=isFixedPaid(f.id,y,m), over=isFixedOverdue(f,y,m);
     const color=paid?'var(--green)':over?'var(--red)':'var(--accent2)';
     const st=paid?'Pagado':over?'Vencido':'Pendiente';
-    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name"><strong>${esc(f.name)}</strong> <span style="color:var(--muted2)">Gasto fijo · ${allCatsMap[f.category]||f.category}</span></div><span style="font-size:0.72rem;color:${color};font-weight:700;margin-right:6px">${st}</span><div class="cal-det-amt" style="color:${color}">${fmt(f.amount)}</div>${!paid?`<button class="btn pay sm" onclick="registerFixedPayment('${f.id}')">Pagar</button>`:''}</div>`;
+    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name"><strong>${esc(f.name)}</strong> <span style="color:var(--muted2)">Gasto fijo · ${allCatsMap[f.category]||f.category}</span></div><span style="font-size:0.72rem;color:${color};font-weight:700;margin-right:6px">${st}</span><div class="cal-det-amt" style="color:${color}">${fmt(f.amount)}</div>${!paid?`<button class="btn pay sm" onclick="registerFixedPayment('${f.id}')">Pagar</button>`:`<button class="btn ghost sm" style="font-size:0.72rem" onclick="revertPayment('${f.id}','fx')">↩ Devolver</button>`}<button class="btn ghost sm" style="padding:4px 8px;margin-left:4px" onclick="openEditCommit('${f.id}','fx')" title="Editar">✎</button></div>`;
   }
-  for(const e of entries){
+  for(const e of freeEntries){
     const t=e.type||'expense'; const color=t==='income'?'var(--green)':'var(--red)';
-    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name">${esc(e.description)} <span style="color:var(--muted2)">${allCatsMap[e.category]||e.category}</span></div><div class="cal-det-amt" style="color:${color}">${t==='income'?'+':'-'}${fmt(e.amount)}</div></div>`;
+    html+=`<div class="cal-det-item"><div class="cal-det-dot" style="background:${color}"></div><div class="cal-det-name">${esc(e.description)} <span style="color:var(--muted2)">${allCatsMap[e.category]||e.category}</span></div><div class="cal-det-amt" style="color:${color}">${t==='income'?'+':'-'}${fmt(e.amount)}</div><button class="btn ghost sm" style="padding:4px 8px;margin-left:4px" onclick="openEdit('${e.id}')" title="Editar">✎</button><button class="btn danger sm" style="padding:4px 8px" onclick="deleteEntry('${e.id}')">✕</button></div>`;
   }
   html+=`<div style="margin-top:10px"><button class="btn neutral sm" onclick="openQuickAdd(${d})">+ Agregar</button></div></div>`;
   document.getElementById('cal-detail').innerHTML=html;
@@ -1649,15 +2592,89 @@ function showToast(msg,color){
 }
 
 /* ── Event listeners ── */
-monthSel.addEventListener('change',()=>{calSelectedDay=null;render();});
-yearSel.addEventListener('change', ()=>{calSelectedDay=null;render();});
+monthSel.addEventListener('change',()=>{calSelectedDay=null;render();document.getElementById('f-date').value=defaultFormDate();});
+yearSel.addEventListener('change', ()=>{calSelectedDay=null;render();document.getElementById('f-date').value=defaultFormDate();});
 document.getElementById('filter-type').addEventListener('change',()=>{rebuildFilterCat();render();});
 document.getElementById('filter-cat').addEventListener('change',render);
 
+/* ── Exportar / Importar ── */
+function exportData(){
+  const data={};
+
+  // Claves principales
+  ['entries','obligations','fixedExpenses','currency','exchangeRate',
+   'custom_cats_expense','custom_cats_income','obligationsChecked','cashflow_schedule','payday_day'
+  ].forEach(k=>{const v=localStorage.getItem(k); if(v!==null) data[k]=v;});
+
+  // Todas las claves de pagos registrados (obl_paid_* y fx_paid_*)
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k.startsWith('obl_paid_')||k.startsWith('fx_paid_')) data[k]=localStorage.getItem(k);
+  }
+
+  data._exportedAt=new Date().toISOString();
+  data._app='finanzas-personales-v1';
+
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`finanzas_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Datos exportados','var(--green)');
+}
+
+function triggerImport(){
+  document.getElementById('import-file').value='';
+  document.getElementById('import-file').click();
+}
+
+function handleImport(event){
+  const file=event.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data._app!=='finanzas-personales-v1'){
+        showToast('Archivo no reconocido','var(--red)'); return;
+      }
+      const fecha=data._exportedAt?new Date(data._exportedAt).toLocaleDateString('es-CR'):'desconocida';
+      if(!confirm(`¿Restaurar respaldo del ${fecha}?\nEsto reemplazará TODOS tus datos actuales.`)) return;
+
+      // Borrar claves de pagos existentes
+      const toRemove=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(k.startsWith('obl_paid_')||k.startsWith('fx_paid_')) toRemove.push(k);
+      }
+      toRemove.forEach(k=>localStorage.removeItem(k));
+
+      // Restaurar datos
+      Object.entries(data).forEach(([k,v])=>{
+        if(k.startsWith('_')) return;
+        localStorage.setItem(k,v);
+      });
+
+      showToast('Datos restaurados — recargando...','var(--green)');
+      setTimeout(()=>location.reload(),1200);
+    } catch(err){
+      showToast('Error al leer el archivo JSON','var(--red)');
+    }
+  };
+  reader.readAsText(file);
+}
+
 /* ── Boot ── */
+setType('expense');
 populateCatSelect(document.getElementById('f-category'),'expense');
 populateCatSelect(document.getElementById('qa-category'),'expense');
 populateCatSelect(document.getElementById('fx-category'),'expense');
+populateCatSelect(document.getElementById('qe-category'),'expense');
+['f-category','e-category','qa-category','fx-category','ec-category','qe-category'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.addEventListener('change',()=>onCatChange(el));
+});
 rebuildFilterCat();
 document.getElementById('btn-usd').className='pill-btn'+(currency==='USD'?' on':'');
 document.getElementById('btn-crc').className='pill-btn'+(currency==='CRC'?' on':'');
