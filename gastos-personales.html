@@ -365,6 +365,12 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .cft-bal-neg{color:var(--red)!important;font-weight:800}
 .cft-bal-zero{color:var(--muted2);font-weight:600}
 .cft-alert-bar td{padding:2px 10px;font-size:0.7rem;background:rgba(239,68,68,.07);color:var(--red);font-weight:600;border-bottom:1px solid rgba(239,68,68,.15)}
+.cft-late-tag{display:inline-block;background:rgba(249,115,22,.15);color:#ea580c;font-size:0.58rem;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:5px;vertical-align:middle;letter-spacing:.03em}
+.cft-carry-tag{display:inline-block;background:rgba(220,38,38,.12);color:var(--red);font-size:0.58rem;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:5px;vertical-align:middle;letter-spacing:.03em}
+.cft-pay-btn{display:inline-block;margin-left:8px;padding:2px 9px;font-size:0.63rem;font-weight:700;background:rgba(22,163,74,.12);color:var(--green);border:1px solid rgba(22,163,74,.3);border-radius:6px;cursor:pointer;vertical-align:middle;transition:background .15s}
+.cft-pay-btn:hover{background:rgba(22,163,74,.22)}
+.cft-row-carried{background:rgba(220,38,38,.03)!important}
+.cft-row-carried td{font-style:italic}
 .cft-tip{cursor:help;border-bottom:1px dashed var(--muted2);display:inline-block;line-height:1.2}
 
 /* ── Panel de Alertas ── */
@@ -1166,6 +1172,22 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   </div>
 </div>
 
+<!-- MODAL: Fecha de pago -->
+<div class="overlay" id="modal-pay-date">
+  <div class="modal" style="max-width:380px">
+    <h2>Registrar pago</h2>
+    <div class="modal-sub" id="pay-date-sub">¿Qué fecha estás realizando el pago?</div>
+    <div class="field">
+      <label>Fecha de pago</label>
+      <input type="date" id="pay-date-input" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn ghost md" onclick="closeModal('modal-pay-date')">Cancelar</button>
+      <button class="btn inc md full" onclick="confirmPayment()">Confirmar pago</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1301,6 +1323,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 /* ── Form type ── */
 let currentType='expense', editType='expense', expType='variable';
+let _pendingPayment=null;
 function setExpType(t){
   expType=t;
   document.getElementById('btn-var').className='type-btn'+(t==='variable'?' active-exp':'');
@@ -1409,7 +1432,10 @@ function oblPaidKey(id,y,m){return `obl_paid_${id}_${y}_${String(m).padStart(2,'
 function isOblPaid(id,y,m){
   if(localStorage.getItem(oblPaidKey(id,y,m))==='1') return true;
   const prefix=`${y}-${String(m).padStart(2,'0')}`;
-  return loadEntries().some(e=>e.commitId===id&&e.commitType==='obl'&&e.date&&e.date.startsWith(prefix));
+  return loadEntries().some(e=>e.commitId===id&&e.commitType==='obl'&&(
+    (e.commitYear===y&&e.commitMonth===m)||
+    (!e.commitYear&&e.date&&e.date.startsWith(prefix))
+  ));
 }
 function setOblPaid(id,y,m){localStorage.setItem(oblPaidKey(id,y,m),'1');}
 function isOverdue(o,y,m){
@@ -1420,7 +1446,10 @@ function fixedPaidKey(id,y,m){return `fx_paid_${id}_${y}_${String(m).padStart(2,
 function isFixedPaid(id,y,m){
   if(localStorage.getItem(fixedPaidKey(id,y,m))==='1') return true;
   const prefix=`${y}-${String(m).padStart(2,'0')}`;
-  return loadEntries().some(e=>e.commitId===id&&e.commitType==='fx'&&e.date&&e.date.startsWith(prefix));
+  return loadEntries().some(e=>e.commitId===id&&e.commitType==='fx'&&(
+    (e.commitYear===y&&e.commitMonth===m)||
+    (!e.commitYear&&e.date&&e.date.startsWith(prefix))
+  ));
 }
 function setFixedPaid(id,y,m){localStorage.setItem(fixedPaidKey(id,y,m),'1');}
 function isFixedOverdue(f,y,m){
@@ -1446,7 +1475,9 @@ function revertPayment(commitId,commitType){
   const m=+monthSel.value, y=+yearSel.value;
   const prefix=`${y}-${String(m).padStart(2,'0')}`;
   const all=loadEntries();
-  const linked=all.find(e=>e.commitId===commitId&&e.commitType===commitType&&e.date&&e.date.startsWith(prefix));
+  const linked=all.find(e=>e.commitId===commitId&&e.commitType===commitType&&(
+    (e.commitYear===y&&e.commitMonth===m)||(!e.commitYear&&e.date&&e.date.startsWith(prefix))
+  ));
   if(linked) saveEntries(all.filter(e=>e.id!==linked.id));
   if(commitType==='obl') localStorage.removeItem(oblPaidKey(commitId,y,m));
   else localStorage.removeItem(fixedPaidKey(commitId,y,m));
@@ -1486,8 +1517,9 @@ function render(){
   const balM=incM-expM;
   const savPct=incM>0?Math.round(balM/incM*100):0;
 
-  const oblsActive=loadObligations().filter(o=>o.active!==false);
-  const fixedActive=loadFixed().filter(f=>f.active!==false);
+  const periodStr=`${selY}-${String(selM).padStart(2,'0')}`;
+  const oblsActive=loadObligations().filter(o=>o.active!==false&&(!o.since||periodStr>=o.since));
+  const fixedActive=loadFixed().filter(f=>f.active!==false&&(!f.since||periodStr>=f.since));
   const paidOblCount=oblsActive.filter(o=>isOblPaid(o.id,selY,selM)).length;
   const paidFxCount =fixedActive.filter(f=>isFixedPaid(f.id,selY,selM)).length;
   const fxTotal =fixedActive.reduce((s,f)=>s+ +f.amount,0);
@@ -1921,7 +1953,8 @@ function saveEditCommit(){
 }
 
 function renderCompromisos(selY,selM){
-  const obls=loadObligations().filter(o=>o.active!==false);
+  const vp=`${selY}-${String(selM).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&(!o.since||vp>=o.since));
   const paidObls=obls.filter(o=>isOblPaid(o.id,selY,selM));
   const overdueObls=obls.filter(o=>!isOblPaid(o.id,selY,selM)&&isOverdue(o,selY,selM));
   const pendingObls=obls.filter(o=>!isOblPaid(o.id,selY,selM)&&!isOverdue(o,selY,selM));
@@ -1953,7 +1986,8 @@ function renderCompromisos(selY,selM){
       const color=paid?'var(--green)':over?'var(--red)':'var(--purple)';
       const payBtn=!paid?`<button class="btn pay sm" onclick="registerOblPayment('${o.id}')">Registrar pago</button>`:`<button class="btn ghost sm" style="font-size:0.72rem" onclick="revertPayment('${o.id}','obl')">↩ Devolver</button>`;
       const editBtn=`<button class="btn ghost sm" style="padding:4px 8px;margin-left:4px" onclick="openEditCommit('${o.id}','obl')" title="Editar">✎</button>`;
-      return commitItemHTML(o.name,`${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}`,o.monthlyPayment,color,sc,st,payBtn,editBtn);
+      const cancelBtn=`<button class="btn neutral sm" style="padding:4px 8px;margin-left:4px;font-size:0.68rem" onclick="cancelObligation('${o.id}')" title="Marcar como cancelado">✗</button>`;
+      return commitItemHTML(o.name,`${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}`,o.monthlyPayment,color,sc,st,payBtn,editBtn+cancelBtn);
     }).join('');
   }
   oblEl.innerHTML=h;
@@ -2085,8 +2119,10 @@ function setCftFilter(f){
 function buildCashflowEvents(selM,selY){
   const allEntries=loadEntries();
   const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  const obls=loadObligations().filter(o=>o.active!==false);
-  const fixeds=loadFixed().filter(f=>f.active!==false);
+  // Filtrar por since: solo incluir items cuya fecha de inicio <= período visualizado
+  const selPeriod=`${selY}-${String(selM).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&(!o.since||selPeriod>=o.since));
+  const fixeds=loadFixed().filter(f=>f.active!==false&&(!f.since||selPeriod>=f.since));
   const dim=new Date(selY,selM,0).getDate();
 
   let startDay=1, endDay=dim;
@@ -2104,8 +2140,13 @@ function buildCashflowEvents(selM,selY){
     const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
     if(dd<periodStart||dd>periodEnd) continue;
     const t=e.type||'expense';
-    events.push({date:dd,desc:e.description,income:t==='income'?+e.amount:0,expense:t==='expense'?+e.amount:0,status:'actual',id:e.id});
-    if(e.commitId) paidKeys.add(e.commitType+'_'+e.commitId);
+    events.push({date:dd,desc:e.description,income:t==='income'?+e.amount:0,expense:t==='expense'?+e.amount:0,
+      status:'actual',id:e.id,latePayment:e.latePayment||false});
+    if(e.commitId){
+      // Solo marcar como pagado del período actual (no arrastres de otros meses)
+      const ey=e.commitYear||d.getFullYear(), em=e.commitMonth||(d.getMonth()+1);
+      if(ey===selY&&em===selM) paidKeys.add(e.commitType+'_'+e.commitId);
+    }
   }
 
   // 2. Gastos fijos pendientes
@@ -2145,6 +2186,42 @@ function buildCashflowEvents(selM,selY){
       const avg=Math.round(amounts.reduce((s,a)=>s+a,0)/amounts.length);
       if(!avg) continue;
       events.push({date:dObj,desc:`Ingreso previsto`,income:avg,expense:0,status:'predicted',id:'pred_'+dd});
+    }
+  }
+
+  // 5. Arrastrados de meses anteriores sin pagar — cada mes por separado
+  for(let mo=1;mo<=3;mo++){
+    const pd=new Date(selY,selM-1-mo,1);
+    const pY=pd.getFullYear(),pM=pd.getMonth()+1;
+    const pDim=new Date(pY,pM,0).getDate();
+    const pPeriod=`${pY}-${String(pM).padStart(2,'0')}`;
+    for(const o of obls){
+      if(!o.dueDay) continue;
+      if(pPeriod<(o.since||'0000-00')) continue; // no arrastrar antes de creación
+      const cKey='obl_'+o.id;
+      if(paidKeys.has(cKey)) continue; // ya pagado en el período actual
+      if(!isOblPaid(o.id,pY,pM)){
+        const origDay=Math.min(o.dueDay,pDim);
+        events.push({date:new Date(selY,selM-1,startDay-(mo*0.001)),// orden estable
+          origDueDate:new Date(pY,pM-1,origDay),
+          desc:o.name,income:0,expense:+o.monthlyPayment,
+          status:'carried',carriedFrom:MONTHS[pM-1],carriedYear:pY,carriedMonth:pM,
+          oblId:o.id,id:'carry_'+cKey+'_'+pY+'_'+pM});
+      }
+    }
+    for(const f of fixeds){
+      if(!f.dueDay) continue;
+      if(pPeriod<(f.since||'0000-00')) continue; // no arrastrar antes de creación
+      const cKey='fx_'+f.id;
+      if(paidKeys.has(cKey)) continue;
+      if(!isFixedPaid(f.id,pY,pM)){
+        const origDay=Math.min(f.dueDay,pDim);
+        events.push({date:new Date(selY,selM-1,startDay-(mo*0.001)),
+          origDueDate:new Date(pY,pM-1,origDay),
+          desc:f.name,income:0,expense:+f.amount,
+          status:'carried',carriedFrom:MONTHS[pM-1],carriedYear:pY,carriedMonth:pM,
+          fxId:f.id,id:'carry_'+cKey+'_'+pY+'_'+pM});
+      }
     }
   }
 
@@ -2222,22 +2299,53 @@ function renderCashflowAlerts(){
   const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   const todayY=today.getFullYear(), todayM=today.getMonth()+1, todayD=today.getDate();
   const dim=new Date(todayY,todayM,0).getDate();
-  const obls=loadObligations().filter(o=>o.active!==false);
-  const fixeds=loadFixed().filter(f=>f.active!==false);
+  const todayPeriod=`${todayY}-${String(todayM).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&(!o.since||todayPeriod>=o.since));
+  const fixeds=loadFixed().filter(f=>f.active!==false&&(!f.since||todayPeriod>=f.since));
 
-  // ── Vencidos: mes actual, fecha ya pasó, sin pagar ──
-  const overdue=[];
+  // ── Vencidos: mes actual + meses anteriores sin pagar ──
+  const overdue=[], overdueAdded=new Set();
+  // Mes actual
   for(const o of obls){
-    if(!o.dueDay) continue;
+    if(!o.dueDay||overdueAdded.has('obl_'+o.id)) continue;
     const dd=Math.min(o.dueDay,dim);
-    if(dd<todayD&&!isOblPaid(o.id,todayY,todayM))
+    if(dd<todayD&&!isOblPaid(o.id,todayY,todayM)){
+      overdueAdded.add('obl_'+o.id);
       overdue.push({name:o.name,amount:o.monthlyPayment,daysAgo:todayD-dd});
+    }
   }
   for(const f of fixeds){
-    if(!f.dueDay) continue;
+    if(!f.dueDay||overdueAdded.has('fx_'+f.id)) continue;
     const dd=Math.min(f.dueDay,dim);
-    if(dd<todayD&&!isFixedPaid(f.id,todayY,todayM))
+    if(dd<todayD&&!isFixedPaid(f.id,todayY,todayM)){
+      overdueAdded.add('fx_'+f.id);
       overdue.push({name:f.name,amount:f.amount,daysAgo:todayD-dd});
+    }
+  }
+  // Meses anteriores (hasta 3 meses atrás)
+  for(let mo=1;mo<=3;mo++){
+    const pd=new Date(todayY,today.getMonth()-mo,1);
+    const pY=pd.getFullYear(),pM=pd.getMonth()+1;
+    const pdim=new Date(pY,pM,0).getDate();
+    const aPeriod=`${pY}-${String(pM).padStart(2,'0')}`;
+    for(const o of obls){
+      if(!o.dueDay||overdueAdded.has('obl_'+o.id)) continue;
+      if(o.since&&aPeriod<o.since) continue; // no retroactivo antes de su creación
+      if(!isOblPaid(o.id,pY,pM)){
+        overdueAdded.add('obl_'+o.id);
+        const daysAgo=Math.round((today-new Date(pY,pM-1,Math.min(o.dueDay,pdim)))/86400000);
+        overdue.push({name:o.name,amount:o.monthlyPayment,daysAgo,carriedFrom:MONTHS[pM-1]});
+      }
+    }
+    for(const f of fixeds){
+      if(!f.dueDay||overdueAdded.has('fx_'+f.id)) continue;
+      if(f.since&&aPeriod<f.since) continue; // no retroactivo antes de su creación
+      if(!isFixedPaid(f.id,pY,pM)){
+        overdueAdded.add('fx_'+f.id);
+        const daysAgo=Math.round((today-new Date(pY,pM-1,Math.min(f.dueDay,pdim)))/86400000);
+        overdue.push({name:f.name,amount:f.amount,daysAgo,carriedFrom:MONTHS[pM-1]});
+      }
+    }
   }
   overdue.sort((a,b)=>b.daysAgo-a.daysAgo);
 
@@ -2320,7 +2428,7 @@ function renderCashflowAlerts(){
         <div class="alert-dot a-red"></div>
         <span class="alert-name">${esc(it.name)}</span>
         <span class="alert-amt" style="color:var(--red)">${fmt(it.amount)}</span>
-        <span class="alert-days a-red">${it.daysAgo}d atrás</span>
+        <span class="alert-days a-red">${it.carriedFrom?`desde ${it.carriedFrom}`:`${it.daysAgo}d atrás`}</span>
       </div>`;
     html+='</div></div>';
   }
@@ -2384,7 +2492,7 @@ function renderCashflowTimeline(){
   let seenActual=false;
   const rows=events.map(ev=>{
     balance+=ev.income-ev.expense;
-    if(ev.status==='pending'||ev.status==='predicted'){
+    if(ev.status==='pending'||ev.status==='predicted'||ev.status==='carried'){
       pendingExpenses+=ev.expense;
       pendingIncome+=ev.income;
     }
@@ -2492,20 +2600,30 @@ function renderCashflowTimeline(){
   for(const row of rows){
     const dStr=row.date.toISOString().slice(0,10);
     const isToday=row.date.getTime()===today.getTime();
-    const isPend=row.status==='pending'||row.status==='predicted';
+    const isPend=row.status==='pending'||row.status==='predicted'||row.status==='carried';
     const isNeg=row.bal<0;
 
-    let trClass=isPend?'cft-row-pending':'';
+    let trClass=row.status==='carried'?'cft-row-carried':isPend?'cft-row-pending':'';
     if(isToday) trClass+=(trClass?' ':'')+'cft-row-today';
 
     const balClass=isNeg?'cft-bal-neg r':row.bal>0?'cft-bal-pos r':'cft-bal-zero r';
     const todayTag=isToday?'<span class="cft-today-tag">HOY</span>':'';
     const pendTag=row.status==='pending'?'<span class="cft-pend-tag">⏳ pendiente</span>':row.status==='predicted'?'<span class="cft-pend-tag">📅 previsto</span>':'';
-    const showDate=dStr!==lastDate; lastDate=dStr;
+    const carryTag=row.status==='carried'?`<span class="cft-carry-tag">↩ ${row.carriedFrom}</span>`:'';
+    const lateTag=row.latePayment?'<span class="cft-late-tag">Pagado con atraso</span>':'';
+    const payBtn=row.status==='carried'
+      ?(row.oblId
+        ?`<button class="cft-pay-btn" onclick="registerOblPayment('${row.oblId}',${row.carriedYear},${row.carriedMonth})">Pagar</button>`
+        :`<button class="cft-pay-btn" onclick="registerFixedPayment('${row.fxId}',${row.carriedYear},${row.carriedMonth})">Pagar</button>`)
+      :'';
+    // Carried rows: mostrar fecha de vencimiento original, siempre visible
+    const isCarried=row.status==='carried';
+    const displayDate=isCarried&&row.origDueDate?row.origDueDate:row.date;
+    const showDate=isCarried||(dStr!==lastDate); lastDate=dStr;
 
     html+=`<tr class="${trClass}">
-      <td class="cft-date-cell">${showDate?fmtD(row.date):''}</td>
-      <td>${esc(row.desc)}${pendTag}${todayTag}</td>
+      <td class="cft-date-cell" style="${isCarried?'color:var(--red)':''}">${showDate?fmtD(displayDate):''}</td>
+      <td>${esc(row.desc)}${pendTag}${carryTag}${lateTag}${todayTag}${payBtn}</td>
       <td class="r cft-inc">${row.income>0?'+'+fmt(row.income):''}</td>
       <td class="r cft-exp">${row.expense>0?'−'+fmt(row.expense):''}</td>
       <td class="${balClass}">${fmt(row.bal)}${isNeg?' ⚠':''}</td>
@@ -2595,76 +2713,166 @@ function toggleSection(id){
 
 /* ── Obligations CRUD ── */
 function renderObligationsModal(){
-  const obls=loadObligations();
+  const all=loadObligations();
   const el=document.getElementById('obl-modal-list');
-  if(!obls.length){ el.innerHTML='<div style="color:var(--muted2);font-size:0.82rem;text-align:center;padding:10px 0">No hay obligaciones registradas.</div>'; return; }
-  el.innerHTML=obls.map(o=>{
+  if(!all.length){ el.innerHTML='<div style="color:var(--muted2);font-size:0.82rem;text-align:center;padding:10px 0">No hay obligaciones registradas.</div>'; return; }
+  const active=all.filter(o=>o.active!==false);
+  const cancelled=all.filter(o=>o.active===false);
+  const renderItem=(o,isCancelled)=>{
     const progress=o.totalDebt>0?Math.max(0,Math.min(100,100-(((o.remainingDebt||o.totalDebt)/o.totalDebt)*100))).toFixed(0):null;
-    return `<div class="obl-modal-item">
+    return `<div class="obl-modal-item" style="${isCancelled?'opacity:.55':''}">
       <div class="obl-modal-info">
-        <div class="obl-modal-name">${esc(o.name)}</div>
-        <div class="obl-modal-meta">${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}${o.note?` · ${esc(o.note)}`:''}</div>
+        <div class="obl-modal-name">${esc(o.name)}${isCancelled?` <span style="font-size:0.65rem;background:var(--s2);color:var(--muted2);padding:1px 6px;border-radius:99px;font-weight:600">Cancelado</span>`:''}</div>
+        <div class="obl-modal-meta">${OBL_TYPES[o.type]||o.type}${o.dueDay?` · Día ${o.dueDay}`:''}${o.cancelledAt?` · Cancelado ${fmtDate(o.cancelledAt)}`:''}${o.note?` · ${esc(o.note)}`:''}</div>
         ${progress?`<div style="margin-top:5px;font-size:0.69rem;color:var(--muted2)">Deuda: ${fmt(o.remainingDebt||o.totalDebt)} de ${fmt(o.totalDebt)} (${progress}% pagado)<div style="height:4px;background:var(--s2);border-radius:99px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${progress}%;background:var(--purple);border-radius:99px"></div></div></div>`:''}
       </div>
-      <div class="obl-modal-amt">${fmt(o.monthlyPayment)}/mes</div>
-      <button class="btn danger sm" style="margin-left:8px" onclick="deleteObligation('${o.id}')">✕</button>
+      <div class="obl-modal-amt" style="color:${isCancelled?'var(--muted2)':'var(--purple)'}">${fmt(o.monthlyPayment)}/mes</div>
+      ${isCancelled
+        ?`<button class="btn ghost sm" style="margin-left:8px;font-size:0.7rem" onclick="reactivateObligation('${o.id}')">↺ Reactivar</button>`
+        :`<button class="btn neutral sm" style="margin-left:8px;font-size:0.7rem" onclick="cancelObligation('${o.id}')">✗ Cancelar</button>`}
+      <button class="btn danger sm" style="margin-left:4px" onclick="deleteObligation('${o.id}')" title="Eliminar permanentemente">✕</button>
     </div>`;
-  }).join('');
+  };
+  let html=active.map(o=>renderItem(o,false)).join('');
+  if(cancelled.length) html+=`<div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);padding:10px 0 4px;margin-top:4px;border-top:1px solid var(--border)">Cancelados</div>`+cancelled.map(o=>renderItem(o,true)).join('');
+  el.innerHTML=html;
 }
 function openObligationsModal(){ renderObligationsModal(); document.getElementById('modal-obligations').classList.add('open'); }
 function addObligation(){
   const name=document.getElementById('o-name').value.trim();
   const monthly=+document.getElementById('o-monthly').value;
   if(!name||!monthly){ showToast('Nombre y pago mensual requeridos','var(--yellow)'); return; }
-  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,category:document.getElementById('o-category').value||'other',note:document.getElementById('o-note').value.trim(),active:true};
+  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,category:document.getElementById('o-category').value||'other',note:document.getElementById('o-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
   const data=loadObligations(); data.push(obl); saveObligations(data);
   ['o-name','o-monthly','o-total','o-dueday','o-note'].forEach(id=>document.getElementById(id).value='');
   showToast('Obligación registrada','var(--purple)'); renderObligationsModal(); render();
 }
 function deleteObligation(id){
-  if(!confirm('¿Eliminar esta obligación?')) return;
+  if(!confirm('¿Eliminar esta obligación? Se perderá el historial.')) return;
   saveObligations(loadObligations().filter(o=>o.id!==id));
   renderObligationsModal(); showToast('Eliminada','var(--red)'); render();
 }
-function registerOblPayment(oblId){
+function cancelObligation(id){
+  if(!confirm('¿Marcar como cancelado? Dejará de generar cuotas pendientes. Los pagos ya registrados se conservan.')) return;
+  const obls=loadObligations();
+  const idx=obls.findIndex(o=>o.id===id); if(idx<0) return;
+  obls[idx].active=false;
+  obls[idx].cancelledAt=now.toISOString().slice(0,10);
+  saveObligations(obls);
+  renderObligationsModal(); showToast('Préstamo cancelado','var(--muted2)'); render();
+}
+function reactivateObligation(id){
+  const obls=loadObligations();
+  const idx=obls.findIndex(o=>o.id===id); if(idx<0) return;
+  obls[idx].active=true;
+  delete obls[idx].cancelledAt;
+  saveObligations(obls);
+  renderObligationsModal(); showToast('Obligación reactivada','var(--green)'); render();
+}
+function registerOblPayment(oblId,prevY,prevM){
   const obl=loadObligations().find(o=>o.id===oblId); if(!obl) return;
-  const selM=+monthSel.value, selY=+yearSel.value;
-  const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,description:`Pago: ${obl.name}`,category:obl.category||OBL_CAT[obl.type]||'other',date:`${selY}-${String(selM).padStart(2,'0')}-${String(obl.dueDay||1).padStart(2,'0')}`,note:OBL_TYPES[obl.type]||obl.type,commitId:oblId,commitType:'obl'};
-  if(obl.totalDebt>0){const obls=loadObligations();const idx=obls.findIndex(o=>o.id===oblId);if(idx>=0){obls[idx].remainingDebt=Math.max(0,(obls[idx].remainingDebt||obls[idx].totalDebt)-obl.monthlyPayment);saveObligations(obls);}}
-  const entries=loadEntries(); entries.push(entry); saveEntries(entries);
-  setOblPaid(oblId,selY,selM);
-  showToast('Pago registrado','var(--green)'); render();
+  const selM=prevM||+monthSel.value, selY=prevY||+yearSel.value;
+  _pendingPayment={type:'obl',id:oblId,selM,selY,dueDay:obl.dueDay||1,name:obl.name,amount:obl.monthlyPayment};
+  document.getElementById('pay-date-sub').textContent=`Pago de: ${obl.name} — ${fmt(obl.monthlyPayment)}`;
+  document.getElementById('pay-date-input').value=now.toISOString().slice(0,10);
+  document.getElementById('modal-pay-date').classList.add('open');
 }
 
 /* ── Fixed CRUD ── */
 function renderFixedModal(){
-  const list=loadFixed(); const el=document.getElementById('fixed-modal-list');
-  if(!list.length){ el.innerHTML='<div style="color:var(--muted2);font-size:0.82rem;text-align:center;padding:10px 0">No hay gastos fijos registrados.</div>'; return; }
+  const all=loadFixed(); const el=document.getElementById('fixed-modal-list');
+  if(!all.length){ el.innerHTML='<div style="color:var(--muted2);font-size:0.82rem;text-align:center;padding:10px 0">No hay gastos fijos registrados.</div>'; return; }
   const allCatsMap={...EXPENSE_CATS,...INCOME_CATS};
-  el.innerHTML=list.map(fx=>`<div class="obl-modal-item"><div class="obl-modal-info"><div class="obl-modal-name">${esc(fx.name)}</div><div class="obl-modal-meta">${allCatsMap[fx.category]||fx.category}${fx.dueDay?` · Día ${fx.dueDay}`:''}${fx.note?` · ${esc(fx.note)}`:''}</div></div><div class="obl-modal-amt" style="color:var(--accent2)">${fmt(fx.amount)}/mes</div><button class="btn danger sm" style="margin-left:8px" onclick="deleteFixed('${fx.id}')">✕</button></div>`).join('');
+  const active=all.filter(f=>f.active!==false);
+  const cancelled=all.filter(f=>f.active===false);
+  const renderFxItem=(fx,isCancelled)=>`<div class="obl-modal-item" style="${isCancelled?'opacity:.55':''}">
+    <div class="obl-modal-info">
+      <div class="obl-modal-name">${esc(fx.name)}${isCancelled?` <span style="font-size:0.65rem;background:var(--s2);color:var(--muted2);padding:1px 6px;border-radius:99px;font-weight:600">Cancelado</span>`:''}</div>
+      <div class="obl-modal-meta">${allCatsMap[fx.category]||fx.category}${fx.dueDay?` · Día ${fx.dueDay}`:''}${fx.cancelledAt?` · Cancelado ${fmtDate(fx.cancelledAt)}`:''}${fx.note?` · ${esc(fx.note)}`:''}</div>
+    </div>
+    <div class="obl-modal-amt" style="color:${isCancelled?'var(--muted2)':'var(--accent2)'}">${fmt(fx.amount)}/mes</div>
+    ${isCancelled
+      ?`<button class="btn ghost sm" style="margin-left:8px;font-size:0.7rem" onclick="reactivateFixed('${fx.id}')">↺ Reactivar</button>`
+      :`<button class="btn neutral sm" style="margin-left:8px;font-size:0.7rem" onclick="cancelFixed('${fx.id}')">✗ Cancelar</button>`}
+    <button class="btn danger sm" style="margin-left:4px" onclick="deleteFixed('${fx.id}')" title="Eliminar permanentemente">✕</button>
+  </div>`;
+  let html=active.map(fx=>renderFxItem(fx,false)).join('');
+  if(cancelled.length) html+=`<div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);padding:10px 0 4px;margin-top:4px;border-top:1px solid var(--border)">Cancelados</div>`+cancelled.map(fx=>renderFxItem(fx,true)).join('');
+  el.innerHTML=html;
 }
 function openManageFixed(){ renderFixedModal(); document.getElementById('modal-fixed').classList.add('open'); }
 function addFixed(){
   const name=document.getElementById('fx-name').value.trim();
   const amount=+document.getElementById('fx-amount').value;
   if(!name||!amount){ showToast('Nombre y monto requeridos','var(--yellow)'); return; }
-  const fx={id:Date.now().toString(),name,amount,category:document.getElementById('fx-category').value,dueDay:+document.getElementById('fx-day').value||null,note:document.getElementById('fx-note').value.trim(),active:true};
+  const fx={id:Date.now().toString(),name,amount,category:document.getElementById('fx-category').value,dueDay:+document.getElementById('fx-day').value||null,note:document.getElementById('fx-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
   const data=loadFixed(); data.push(fx); saveFixed(data);
   ['fx-name','fx-amount','fx-day','fx-note'].forEach(id=>document.getElementById(id).value='');
   showToast('Gasto fijo registrado','var(--accent)'); renderFixedModal(); render();
 }
 function deleteFixed(id){
-  if(!confirm('¿Eliminar este gasto fijo?')) return;
+  if(!confirm('¿Eliminar este gasto fijo? Se perderá el historial.')) return;
   saveFixed(loadFixed().filter(f=>f.id!==id));
   renderFixedModal(); showToast('Eliminado','var(--red)'); render();
 }
-function registerFixedPayment(fxId){
+function cancelFixed(id){
+  if(!confirm('¿Cancelar este gasto fijo? Dejará de generar cuotas pendientes. Los pagos ya registrados se conservan.')) return;
+  const fixeds=loadFixed();
+  const idx=fixeds.findIndex(f=>f.id===id); if(idx<0) return;
+  fixeds[idx].active=false;
+  fixeds[idx].cancelledAt=now.toISOString().slice(0,10);
+  saveFixed(fixeds);
+  renderFixedModal(); showToast('Gasto fijo cancelado','var(--muted2)'); render();
+}
+function reactivateFixed(id){
+  const fixeds=loadFixed();
+  const idx=fixeds.findIndex(f=>f.id===id); if(idx<0) return;
+  fixeds[idx].active=true;
+  delete fixeds[idx].cancelledAt;
+  saveFixed(fixeds);
+  renderFixedModal(); showToast('Gasto fijo reactivado','var(--green)'); render();
+}
+function registerFixedPayment(fxId,prevY,prevM){
   const fx=loadFixed().find(f=>f.id===fxId); if(!fx) return;
-  const selM=+monthSel.value, selY=+yearSel.value;
-  const entry={id:Date.now().toString(),type:'expense',amount:fx.amount,description:fx.name,category:fx.category,date:`${selY}-${String(selM).padStart(2,'0')}-${String(fx.dueDay||1).padStart(2,'0')}`,note:fx.note||'Gasto fijo mensual',commitId:fxId,commitType:'fx'};
-  const entries=loadEntries(); entries.push(entry); saveEntries(entries);
-  setFixedPaid(fxId,selY,selM);
-  showToast('Pago registrado','var(--green)'); render();
+  const selM=prevM||+monthSel.value, selY=prevY||+yearSel.value;
+  _pendingPayment={type:'fx',id:fxId,selM,selY,dueDay:fx.dueDay||1,name:fx.name,amount:fx.amount};
+  document.getElementById('pay-date-sub').textContent=`Pago de: ${fx.name} — ${fmt(fx.amount)}`;
+  document.getElementById('pay-date-input').value=now.toISOString().slice(0,10);
+  document.getElementById('modal-pay-date').classList.add('open');
+}
+
+function confirmPayment(){
+  if(!_pendingPayment){closeModal('modal-pay-date');return;}
+  const payDate=document.getElementById('pay-date-input').value;
+  if(!payDate){showToast('Seleccioná una fecha','var(--yellow)');return;}
+  const {type,id,selM,selY,dueDay}=_pendingPayment;
+  const dueDateStr=`${selY}-${String(selM).padStart(2,'0')}-${String(dueDay).padStart(2,'0')}`;
+  const isLate=payDate>dueDateStr;
+  if(type==='obl'){
+    const obl=loadObligations().find(o=>o.id===id); if(!obl) return;
+    const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,
+      description:`Pago: ${obl.name}`,category:obl.category||OBL_CAT[obl.type]||'other',
+      date:payDate,note:OBL_TYPES[obl.type]||obl.type,
+      commitId:id,commitType:'obl',commitMonth:selM,commitYear:selY,
+      dueDate:dueDateStr,latePayment:isLate};
+    if(obl.totalDebt>0){const obls=loadObligations();const idx=obls.findIndex(o=>o.id===id);
+      if(idx>=0){obls[idx].remainingDebt=Math.max(0,(obls[idx].remainingDebt||obls[idx].totalDebt)-obl.monthlyPayment);saveObligations(obls);}}
+    const entries=loadEntries(); entries.push(entry); saveEntries(entries);
+    setOblPaid(id,selY,selM);
+  } else {
+    const fx=loadFixed().find(f=>f.id===id); if(!fx) return;
+    const entry={id:Date.now().toString(),type:'expense',amount:fx.amount,
+      description:fx.name,category:fx.category,
+      date:payDate,note:fx.note||'Gasto fijo mensual',
+      commitId:id,commitType:'fx',commitMonth:selM,commitYear:selY,
+      dueDate:dueDateStr,latePayment:isLate};
+    const entries=loadEntries(); entries.push(entry); saveEntries(entries);
+    setFixedPaid(id,selY,selM);
+  }
+  closeModal('modal-pay-date');
+  _pendingPayment=null;
+  showToast('Pago registrado','var(--green)');
+  render();
 }
 
 /* ── Category detail toggle ── */
@@ -2714,7 +2922,7 @@ document.getElementById('entry-form').addEventListener('submit',ev=>{
     const monthly=+document.getElementById('f-amount').value;
     if(!name||!monthly){showToast('Nombre y pago mensual requeridos','var(--yellow)');return;}
     const tot=+document.getElementById('f-obl-total').value||0;
-    const obl={id:Date.now().toString(),name,type:document.getElementById('f-obl-type').value,monthlyPayment:monthly,totalDebt:tot,remainingDebt:tot,dueDay:+document.getElementById('f-obl-dueday').value||null,note:document.getElementById('f-note').value.trim(),active:true};
+    const obl={id:Date.now().toString(),name,type:document.getElementById('f-obl-type').value,monthlyPayment:monthly,totalDebt:tot,remainingDebt:tot,dueDay:+document.getElementById('f-obl-dueday').value||null,note:document.getElementById('f-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
     const data=loadObligations(); data.push(obl); saveObligations(data);
     showToast('Obligación registrada','var(--purple)');
     ev.target.reset();
@@ -2724,7 +2932,7 @@ document.getElementById('entry-form').addEventListener('submit',ev=>{
   const entry={id:Date.now().toString(),type:currentType,amount:+document.getElementById('f-amount').value,description:document.getElementById('f-desc').value.trim(),category:document.getElementById('f-category').value,date:document.getElementById('f-date').value,note:document.getElementById('f-note').value.trim()};
   const data=loadEntries(); data.push(entry); saveEntries(data);
   if(expType==='fixed'&&currentType==='expense'){
-    const fx={id:(Date.now()+1).toString(),name:entry.description,amount:entry.amount,category:entry.category,dueDay:+entry.date.split('-')[2]||null,note:entry.note,active:true};
+    const fx={id:(Date.now()+1).toString(),name:entry.description,amount:entry.amount,category:entry.category,dueDay:+entry.date.split('-')[2]||null,note:entry.note,active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
     const fxData=loadFixed(); fxData.push(fx); saveFixed(fxData);
     const allE=loadEntries(); const ei=allE.findIndex(e=>e.id===entry.id);
     if(ei>=0){allE[ei].commitId=fx.id; allE[ei].commitType='fx'; saveEntries(allE);}
@@ -2745,9 +2953,9 @@ function deleteEntry(id){
   const all=loadEntries();
   const entry=all.find(e=>e.id===id);
   saveEntries(all.filter(e=>e.id!==id));
-  if(entry&&entry.commitId&&entry.date){
-    const d=new Date(entry.date+'T12:00:00');
-    const y=d.getFullYear(), m=d.getMonth()+1;
+  if(entry&&entry.commitId){
+    const d=entry.date?new Date(entry.date+'T12:00:00'):new Date();
+    const y=entry.commitYear||d.getFullYear(), m=entry.commitMonth||(d.getMonth()+1);
     if(entry.commitType==='obl') localStorage.removeItem(oblPaidKey(entry.commitId,y,m));
     else if(entry.commitType==='fx') localStorage.removeItem(fixedPaidKey(entry.commitId,y,m));
   }
@@ -2781,7 +2989,7 @@ function saveEdit(){
     delete updated.commitId; delete updated.commitType;
   } else if(!wasFx&&nowFx){
     // Variable → Fijo: crea gasto fijo y vincula
-    const fx={id:(Date.now()+1).toString(),name:updated.description,amount:updated.amount,category:updated.category,dueDay:+updated.date.split('-')[2]||null,note:updated.note,active:true};
+    const fx={id:(Date.now()+1).toString(),name:updated.description,amount:updated.amount,category:updated.category,dueDay:+updated.date.split('-')[2]||null,note:updated.note,active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
     saveFixed([...loadFixed(),fx]);
     updated.commitId=fx.id; updated.commitType='fx';
     const d=new Date(updated.date+'T12:00:00');
@@ -2848,7 +3056,7 @@ function saveQuickAdd(){
     const name=document.getElementById('qa-o-name').value.trim();
     const monthly=+document.getElementById('qa-o-monthly').value;
     if(!name||!monthly){ showToast('Nombre y pago mensual requeridos','var(--yellow)'); return; }
-    const obl={id:Date.now().toString(),name,type:resolveType('qa-o-type','qa-o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('qa-o-total').value||0,remainingDebt:+document.getElementById('qa-o-total').value||0,dueDay:qaDay,category:document.getElementById('qa-o-category').value||'other',note:document.getElementById('qa-o-note').value.trim(),active:true};
+    const obl={id:Date.now().toString(),name,type:resolveType('qa-o-type','qa-o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('qa-o-total').value||0,remainingDebt:+document.getElementById('qa-o-total').value||0,dueDay:qaDay,category:document.getElementById('qa-o-category').value||'other',note:document.getElementById('qa-o-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
     saveObligations([...loadObligations(),obl]);
     showToast('Obligación registrada','var(--purple)');
   } else {
