@@ -55,7 +55,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .btn-today:hover{background:rgba(99,102,241,.22)}
 
 /* ── Summary cards ── */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
 .card{background:var(--s1);border:1px solid var(--border);border-left-width:3px;border-radius:var(--r);padding:16px 18px}
 .card.c-green {border-left-color:var(--green)}
 .card.c-red   {border-left-color:var(--red)}
@@ -73,6 +73,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 /* ── Main 2-col ── */
 .main{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
 @media(max-width:760px){.main{grid-template-columns:1fr}}
+.main-wrap{padding:20px 16px}
 
 /* ── Form panel ── */
 .form-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:sticky;top:16px}
@@ -364,6 +365,40 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 .cft-bal-neg{color:var(--red)!important;font-weight:800}
 .cft-bal-zero{color:var(--muted2);font-weight:600}
 .cft-alert-bar td{padding:2px 10px;font-size:0.7rem;background:rgba(239,68,68,.07);color:var(--red);font-weight:600;border-bottom:1px solid rgba(239,68,68,.15)}
+.cft-tip{cursor:help;border-bottom:1px dashed var(--muted2);display:inline-block;line-height:1.2}
+
+/* ── Panel de Alertas ── */
+.alerts-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.alert-card{background:var(--s1);border:1px solid var(--border);border-left-width:3px;border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.alert-card.a-red   {border-left-color:var(--red)}
+.alert-card.a-yellow{border-left-color:var(--yellow)}
+.alert-card.a-green {border-left-color:var(--green)}
+.alert-head{display:flex;align-items:center;gap:7px;padding:9px 13px}
+.alert-head.a-red   {background:rgba(220,38,38,.05)}
+.alert-head.a-yellow{background:rgba(217,119,6,.05)}
+.alert-head.a-green {background:rgba(22,163,74,.05)}
+.alert-head-icon{font-size:0.9rem;flex-shrink:0;line-height:1}
+.alert-head-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.alert-head-title.a-red   {color:var(--red)}
+.alert-head-title.a-yellow{color:var(--yellow)}
+.alert-head-title.a-green {color:var(--green)}
+.alert-badge{font-size:0.63rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:auto;flex-shrink:0}
+.alert-badge.a-red   {background:rgba(220,38,38,.12);color:var(--red)}
+.alert-badge.a-yellow{background:rgba(217,119,6,.12);color:var(--yellow)}
+.alert-badge.a-green {background:rgba(22,163,74,.12);color:var(--green)}
+.alert-list{border-top:1px solid var(--border)}
+.alert-row{display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid var(--border)}
+.alert-row:last-child{border-bottom:none}
+.alert-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.alert-dot.a-red   {background:var(--red)}
+.alert-dot.a-yellow{background:var(--yellow)}
+.alert-dot.a-green {background:var(--green)}
+.alert-name{flex:1;font-size:0.8rem;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alert-amt{font-size:0.82rem;font-weight:700;flex-shrink:0;margin-left:4px}
+.alert-days{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0;white-space:nowrap;margin-left:4px}
+.alert-days.a-red   {background:rgba(220,38,38,.1);color:var(--red)}
+.alert-days.a-yellow{background:rgba(217,119,6,.1);color:var(--yellow)}
+.alert-days.a-green {background:rgba(22,163,74,.1);color:var(--green)}
 
 /* ══════════════════════════════════════
    RESPONSIVE — MÓVIL  (≤ 620px)
@@ -394,8 +429,8 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   .period-selects select{font-size:0.78rem;padding:4px 7px}
   .btn-today{padding:5px 10px;font-size:0.72rem}
 
-  /* ── Summary cards: 2 columnas ── */
-  .cards{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+  /* ── Summary cards: 2 columnas en móvil ── */
+  .cards{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
   .card{padding:10px 10px}
   .card-lbl{font-size:0.6rem}
   .card-val{font-size:1.1rem}
@@ -489,6 +524,45 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 
   /* ── Toast ── */
   .toast{right:10px;left:10px;text-align:center}
+
+  /* ── iOS: evitar zoom automático al tocar inputs ── */
+  .field input,.field select,.field textarea,
+  .filter-bar select,.period-selects select,
+  #conv-rate,#ib-amount,#ib-year{font-size:16px}
+
+  /* ── Touch targets: mínimo 40px de alto ── */
+  .tab{padding:10px 11px;font-size:0.71rem}
+  .period-arrow{width:36px;height:36px}
+  .pill-btn{padding:8px 10px}
+  .header-action{padding:8px 10px}
+  .btn-today{padding:8px 12px}
+
+  /* ── Botones de cabecera: separar en 2 grupos ── */
+  .header-right{gap:6px}
+  .pill-toggle{flex-shrink:0}
+
+  /* ── Contenedor: reducir padding ── */
+  .main-wrap{padding:10px 8px}
+
+
+  /* ── Period bar: evitar overflow ── */
+  .period-bar{flex-wrap:nowrap}
+  .period-selects{gap:4px}
+  .period-selects select{max-width:120px}
+}
+
+/* ── Pantallas muy pequeñas (≤ 380px) ── */
+@media(max-width:380px){
+  header h1{font-size:0.82rem}
+  .header-action{font-size:0.62rem;padding:6px 7px}
+  .pill-btn{padding:6px 7px;font-size:0.65rem}
+  .cards{gap:5px}
+  .card-val{font-size:0.95rem}
+  /* En 380px row2 se vuelve una sola columna para no apretar */
+  .row2{grid-template-columns:1fr}
+  .tab{padding:9px 8px;font-size:0.65rem}
+  .section-title{font-size:0.75rem}
+  .cft-table{font-size:0.68rem;min-width:360px}
 }
 </style>
 </head>
@@ -518,7 +592,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   </div>
 </header>
 
-<div class="main-wrap" style="max-width:1140px;margin:0 auto;padding:20px 16px">
+<div class="main-wrap" style="max-width:1140px;margin:0 auto">
 
   <!-- PERIOD BAR -->
   <div class="period-bar">
@@ -561,6 +635,9 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
       <div class="card-sub" id="card-savings">Ahorro: 0%</div>
     </div>
   </div>
+
+  <!-- PANEL DE ALERTAS -->
+  <div id="cft-alerts" style="display:none;margin-bottom:16px"></div>
 
   <!-- MAIN -->
   <div class="main">
@@ -792,7 +869,8 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
           <button class="cft-pill on" id="cft-f-all" onclick="setCftFilter('all')">Mes completo</button>
           <button class="cft-pill"    id="cft-f-q1"  onclick="setCftFilter('q1')">1 – 15</button>
           <button class="cft-pill"    id="cft-f-q2"  onclick="setCftFilter('q2')">16 – fin</button>
-          <button class="btn acc sm"  style="margin-left:auto" onclick="openQuickExpense()">+ Gasto rápido</button>
+          <button class="btn ghost sm" style="margin-left:auto" onclick="openInitialBalanceModal()" id="ib-btn" title="Configurar saldo inicial">⚖ Saldo inicial</button>
+          <button class="btn acc sm"  onclick="openQuickExpense()">+ Gasto rápido</button>
         </div>
         <div class="section">
           <div class="section-head">
@@ -869,7 +947,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
       <div class="field"><label>Deuda total (opcional)</label><input type="number" id="o-total" placeholder="0.00" step="0.01" min="0" /></div>
       <div class="field"><label>Día de pago</label><input type="number" id="o-dueday" placeholder="15" min="1" max="31" /></div>
     </div>
-    <div class="field"><label>Notas</label><input type="text" id="o-note" placeholder="Institución, referencia..." /></div>
+    <div class="row2">
+      <div class="field"><label>Categoría</label><select id="o-category"></select></div>
+      <div class="field"><label>Notas</label><input type="text" id="o-note" placeholder="Institución, referencia..." /></div>
+    </div>
     <div class="modal-footer">
       <button class="btn ghost md" onclick="closeModal('modal-obligations')">Cerrar</button>
       <button class="btn pur md full" onclick="addObligation()">Agregar obligación</button>
@@ -925,6 +1006,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         <div class="field"><label>Deuda total</label><input type="number" id="ec-total" step="0.01" min="0" placeholder="0.00" /></div>
         <div class="field"><label>Deuda restante</label><input type="number" id="ec-remaining" step="0.01" min="0" placeholder="0.00" /></div>
       </div>
+      <div class="field"><label>Categoría</label><select id="ec-obl-category"></select></div>
     </div>
     <div id="ec-fx-fields">
       <div class="row2">
@@ -988,7 +1070,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         <div class="field"><label>Deuda total (opcional)</label><input type="number" id="qa-o-total" placeholder="0.00" /></div>
         <div class="field"><label>Día de pago</label><input type="number" id="qa-o-dueday" min="1" max="31" readonly style="background:var(--s2)" /></div>
       </div>
-      <div class="field"><label>Notas</label><input type="text" id="qa-o-note" placeholder="Institución, referencia..." /></div>
+      <div class="row2">
+        <div class="field"><label>Categoría</label><select id="qa-o-category"></select></div>
+        <div class="field"><label>Notas</label><input type="text" id="qa-o-note" placeholder="Institución, referencia..." /></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn ghost md" onclick="closeModal('modal-quick-add')">Cancelar</button>
@@ -1030,6 +1115,39 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
   </div>
 </div>
 
+<!-- MODAL: Saldo Inicial -->
+<div class="overlay" id="modal-initial-balance">
+  <div class="modal" style="max-width:400px">
+    <h2>Saldo inicial</h2>
+    <div class="modal-sub">El saldo que tenías antes de empezar a usar la app. Se suma como punto de partida al flujo de caja.</div>
+    <div class="field">
+      <label>Monto (puede ser negativo si estabas en rojo)</label>
+      <input type="number" id="ib-amount" placeholder="0.00" step="0.01" />
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Mes de referencia</label>
+        <select id="ib-month">
+          <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+          <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+          <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+          <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Año</label>
+        <input type="number" id="ib-year" placeholder="2025" min="2000" max="2099" />
+      </div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--muted2);margin-top:-6px;margin-bottom:12px">Ej: si empezaste en junio, seleccioná <strong>Mayo</strong> e ingresá lo que te quedó ese mes.</div>
+    <div class="modal-footer">
+      <button class="btn ghost md" onclick="closeModal('modal-initial-balance')">Cancelar</button>
+      <button class="btn danger sm" id="ib-delete-btn" onclick="deleteInitialBalance()" style="display:none">Eliminar</button>
+      <button class="btn acc md full" onclick="saveInitialBalanceModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Gasto rápido (Flujo) -->
 <div class="overlay" id="modal-quick-exp">
   <div class="modal" style="max-width:380px">
@@ -1059,6 +1177,7 @@ function saveCustomCats(type,cats){localStorage.setItem('custom_cats_'+type,JSON
 const EXP_COLORS=['#f59e0b','#3b82f6','#8b5cf6','#ec4899','#22c55e','#f97316','#06b6d4','#94a3b8'];
 const INC_COLORS=['#10b981','#6366f1','#f59e0b','#14b8a6','#e879f9','#94a3b8'];
 const OBL_TYPES={loan:'Préstamo personal',mortgage:'Hipoteca / Renta',car:'Crédito automotriz',creditcard:'Tarjeta de crédito',subscription:'Suscripción fija',other:'Otro'};
+const OBL_CAT={loan:'other',mortgage:'housing',car:'transport',creditcard:'other',subscription:'other',other:'other'};
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 /* ── Data ── */
@@ -1439,6 +1558,9 @@ function render(){
   /* Calendar — always keep in sync */
   renderCalendar();
 
+  /* Alertas — siempre visibles independiente del tab */
+  renderCashflowAlerts();
+
   /* Flujo timeline — solo cuando está activo */
   if(currentView==='flujo') renderCashflowTimeline();
 }
@@ -1748,6 +1870,7 @@ function openEditCommit(id,type){
     document.getElementById('ec-remaining').value=obl.remainingDebt||'';
     document.getElementById('ec-dueday').value=obl.dueDay||'';
     document.getElementById('ec-note').value=obl.note||'';
+    populateCatSelect(document.getElementById('ec-obl-category'),'expense',obl.category||'other');
     document.getElementById('ec-save-btn').className='btn pur md full';
   } else {
     const fx=loadFixed().find(f=>f.id===id); if(!fx) return;
@@ -1782,7 +1905,7 @@ function saveEditCommit(){
     const monthly=+document.getElementById('ec-monthly').value;
     if(!monthly){showToast('El pago mensual es requerido','var(--yellow)');return;}
     const obls=loadObligations(); const idx=obls.findIndex(o=>o.id===editCommitId); if(idx<0) return;
-    obls[idx]={...obls[idx],name,type:document.getElementById('ec-type').value,monthlyPayment:monthly,totalDebt:+document.getElementById('ec-total').value||obls[idx].totalDebt,remainingDebt:+document.getElementById('ec-remaining').value||obls[idx].remainingDebt,dueDay:newDueDay,note:document.getElementById('ec-note').value.trim()};
+    obls[idx]={...obls[idx],name,type:document.getElementById('ec-type').value,monthlyPayment:monthly,totalDebt:+document.getElementById('ec-total').value||obls[idx].totalDebt,remainingDebt:+document.getElementById('ec-remaining').value||obls[idx].remainingDebt,dueDay:newDueDay,category:document.getElementById('ec-obl-category').value||obls[idx].category||'other',note:document.getElementById('ec-note').value.trim()};
     saveObligations(obls);
     syncLinkedEntryDates(editCommitId,'obl',newDueDay);
   } else {
@@ -2029,19 +2152,215 @@ function buildCashflowEvents(selM,selY){
   return {events,startDay,endDay};
 }
 
+/* ── Saldo inicial ── */
+function loadInitialBalance(){ return JSON.parse(localStorage.getItem('initial_balance')||'null'); }
+function saveInitialBalance(data){ localStorage.setItem('initial_balance',JSON.stringify(data)); }
+function openInitialBalanceModal(){
+  const ib=loadInitialBalance();
+  const now2=new Date();
+  document.getElementById('ib-amount').value=ib?ib.amount:'';
+  if(ib&&ib.date){
+    const d=new Date(ib.date+'T12:00:00');
+    document.getElementById('ib-month').value=d.getMonth()+1;
+    document.getElementById('ib-year').value=d.getFullYear();
+  } else {
+    const prev=new Date(now2.getFullYear(),now2.getMonth()-1,1);
+    document.getElementById('ib-month').value=prev.getMonth()+1;
+    document.getElementById('ib-year').value=prev.getFullYear();
+  }
+  document.getElementById('ib-delete-btn').style.display=ib?'inline-flex':'none';
+  document.getElementById('modal-initial-balance').classList.add('open');
+}
+function saveInitialBalanceModal(){
+  const amount=document.getElementById('ib-amount').value;
+  if(amount===''){ showToast('Ingresá un monto','var(--yellow)'); return; }
+  const m=+document.getElementById('ib-month').value;
+  const y=+document.getElementById('ib-year').value;
+  if(!y||y<2000||y>2099){ showToast('Año inválido','var(--yellow)'); return; }
+  const lastDay=new Date(y,m,0).getDate();
+  const date=`${y}-${String(m).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
+  saveInitialBalance({amount:+amount,date});
+  closeModal('modal-initial-balance');
+  showToast('Saldo inicial guardado','var(--green)');
+  renderCashflowTimeline();
+}
+function deleteInitialBalance(){
+  localStorage.removeItem('initial_balance');
+  closeModal('modal-initial-balance');
+  showToast('Saldo inicial eliminado','var(--red)');
+  renderCashflowTimeline();
+}
+
 function getOpeningBalance(selM,selY,startDay){
-  // Suma todos los movimientos registrados ANTES del inicio del período
   const cutoff=new Date(selY,selM-1,startDay);
   let bal=0;
+  let ibDate=null;
+  const ib=loadInitialBalance();
+  if(ib&&ib.date){
+    const d=new Date(ib.date+'T12:00:00');
+    const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    if(dd<cutoff){
+      bal=+ib.amount; // el saldo inicial es el punto de partida, no se acumula encima del historial
+      ibDate=dd;      // entradas en esta fecha o antes ya están "incluidas" en el monto manual
+    }
+  }
   for(const e of loadEntries()){
     const d=new Date(e.date+'T12:00:00');
     const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
     if(dd>=cutoff) continue;
+    if(ibDate!==null&&dd<=ibDate) continue; // ignorar entradas cubiertas por el saldo inicial
     const t=e.type||'expense';
     if(t==='income') bal+= +e.amount;
     else if(t==='expense') bal-= +e.amount;
   }
   return bal;
+}
+
+function renderCashflowAlerts(){
+  const el=document.getElementById('cft-alerts');
+  if(!el) return;
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const todayY=today.getFullYear(), todayM=today.getMonth()+1, todayD=today.getDate();
+  const dim=new Date(todayY,todayM,0).getDate();
+  const obls=loadObligations().filter(o=>o.active!==false);
+  const fixeds=loadFixed().filter(f=>f.active!==false);
+
+  // ── Vencidos: mes actual, fecha ya pasó, sin pagar ──
+  const overdue=[];
+  for(const o of obls){
+    if(!o.dueDay) continue;
+    const dd=Math.min(o.dueDay,dim);
+    if(dd<todayD&&!isOblPaid(o.id,todayY,todayM))
+      overdue.push({name:o.name,amount:o.monthlyPayment,daysAgo:todayD-dd});
+  }
+  for(const f of fixeds){
+    if(!f.dueDay) continue;
+    const dd=Math.min(f.dueDay,dim);
+    if(dd<todayD&&!isFixedPaid(f.id,todayY,todayM))
+      overdue.push({name:f.name,amount:f.amount,daysAgo:todayD-dd});
+  }
+  overdue.sort((a,b)=>b.daysAgo-a.daysAgo);
+
+  // ── Próximos 7 días (mes actual y siguiente) ──
+  const upcoming=[];
+  const seen=new Set();
+  for(let mo=0;mo<=1;mo++){
+    const cd=new Date(todayY,today.getMonth()+mo,1);
+    const cy=cd.getFullYear(),cm=cd.getMonth()+1;
+    const cdim=new Date(cy,cm,0).getDate();
+    for(const o of obls){
+      if(!o.dueDay) continue;
+      const dd=Math.min(o.dueDay,cdim);
+      const due=new Date(cy,cm-1,dd);
+      const diff=Math.round((due-today)/86400000);
+      const key='o_'+o.id+'_'+cy+'_'+cm;
+      if(diff>=0&&diff<=7&&!isOblPaid(o.id,cy,cm)&&!seen.has(key)){
+        seen.add(key); upcoming.push({name:o.name,amount:o.monthlyPayment,daysLeft:diff});
+      }
+    }
+    for(const f of fixeds){
+      if(!f.dueDay) continue;
+      const dd=Math.min(f.dueDay,cdim);
+      const due=new Date(cy,cm-1,dd);
+      const diff=Math.round((due-today)/86400000);
+      const key='f_'+f.id+'_'+cy+'_'+cm;
+      if(diff>=0&&diff<=7&&!isFixedPaid(f.id,cy,cm)&&!seen.has(key)){
+        seen.add(key); upcoming.push({name:f.name,amount:f.amount,daysLeft:diff});
+      }
+    }
+  }
+  upcoming.sort((a,b)=>a.daysLeft-b.daysLeft);
+
+  // ── Próximo ingreso ──
+  let nextInc=null;
+  const allEntries=loadEntries();
+  const futIncs=allEntries
+    .filter(e=>(e.type||'expense')==='income'&&new Date(e.date+'T12:00:00')>today)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(futIncs.length){
+    const e=futIncs[0];
+    const d=new Date(e.date+'T12:00:00');
+    const dn=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    nextInc={name:e.description,amount:e.amount,daysLeft:Math.round((dn-today)/86400000)};
+  } else {
+    const allIncs=allEntries.filter(e=>(e.type||'expense')==='income');
+    if(allIncs.length){
+      const dc={};
+      for(const i of allIncs) dc[new Date(i.date+'T12:00:00').getDate()]=(dc[new Date(i.date+'T12:00:00').getDate()]||0)+1;
+      const maxC=Math.max(...Object.values(dc));
+      let pds=Object.keys(dc).filter(d=>dc[d]>=Math.max(2,Math.ceil(maxC/2))).map(Number);
+      if(!pds.length) pds=Object.keys(dc).map(Number);
+      pds.sort((a,b)=>a-b);
+      const nd=pds.find(d=>d>todayD);
+      const nDate=nd
+        ?new Date(todayY,today.getMonth(),nd)
+        :new Date(today.getMonth()+1>11?todayY+1:todayY,today.getMonth()+1>11?0:today.getMonth()+1,pds[0]);
+      const diff=Math.max(1,Math.round((new Date(nDate.getFullYear(),nDate.getMonth(),nDate.getDate())-today)/86400000));
+      const amounts=allIncs.filter(e=>new Date(e.date+'T12:00:00').getDate()===nDate.getDate()).map(e=>+e.amount);
+      const avg=amounts.length?Math.round(amounts.reduce((s,a)=>s+a,0)/amounts.length):0;
+      if(avg>0) nextInc={name:'Ingreso previsto',amount:avg,daysLeft:diff,predicted:true};
+    }
+  }
+
+  if(!overdue.length&&!upcoming.length&&!nextInc){el.innerHTML='';el.style.display='none';return;}
+  el.style.display='';
+
+  const dLabel=d=>d===0?'hoy':d===1?'mañana':`en ${d}d`;
+  let html='<div class="alerts-panel">';
+
+  if(overdue.length){
+    html+=`<div class="alert-card a-red">
+      <div class="alert-head a-red">
+        <span class="alert-head-icon">⚠️</span>
+        <span class="alert-head-title a-red">Vencido</span>
+        <span class="alert-badge a-red">${overdue.length}</span>
+      </div><div class="alert-list">`;
+    for(const it of overdue)
+      html+=`<div class="alert-row">
+        <div class="alert-dot a-red"></div>
+        <span class="alert-name">${esc(it.name)}</span>
+        <span class="alert-amt" style="color:var(--red)">${fmt(it.amount)}</span>
+        <span class="alert-days a-red">${it.daysAgo}d atrás</span>
+      </div>`;
+    html+='</div></div>';
+  }
+
+  if(upcoming.length){
+    html+=`<div class="alert-card a-yellow">
+      <div class="alert-head a-yellow">
+        <span class="alert-head-icon">🕐</span>
+        <span class="alert-head-title a-yellow">Próximo a pagar</span>
+        <span class="alert-badge a-yellow">${upcoming.length}</span>
+      </div><div class="alert-list">`;
+    for(const it of upcoming)
+      html+=`<div class="alert-row">
+        <div class="alert-dot a-yellow"></div>
+        <span class="alert-name">${esc(it.name)}</span>
+        <span class="alert-amt" style="color:var(--yellow)">${fmt(it.amount)}</span>
+        <span class="alert-days a-yellow">${dLabel(it.daysLeft)}</span>
+      </div>`;
+    html+='</div></div>';
+  }
+
+  if(nextInc){
+    const predTag=nextInc.predicted?` <span style="font-size:.62rem;opacity:.6;font-weight:400">(previsto)</span>`:'';
+    html+=`<div class="alert-card a-green">
+      <div class="alert-head a-green">
+        <span class="alert-head-icon">💰</span>
+        <span class="alert-head-title a-green">Próximo ingreso</span>
+      </div><div class="alert-list">
+        <div class="alert-row">
+          <div class="alert-dot a-green"></div>
+          <span class="alert-name">${esc(nextInc.name)}${predTag}</span>
+          <span class="alert-amt" style="color:var(--green)">${fmt(nextInc.amount)}</span>
+          <span class="alert-days a-green">${dLabel(nextInc.daysLeft)}</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 function renderCashflowTimeline(){
@@ -2102,6 +2421,11 @@ function renderCashflowTimeline(){
   const dispColor=disponible>0?'var(--green)':disponible<0?'var(--red)':'var(--muted2)';
   const openColor=openBal>=0?'var(--green)':'var(--red)';
 
+  const ib=loadInitialBalance();
+  const ibApplied=ib&&ib.date&&new Date(ib.date+'T12:00:00')<new Date(selY,selM-1,startDay);
+  const ibColor=ib&&+ib.amount>=0?'var(--green)':'var(--red)';
+  const ibMonthLabel=ib&&ib.date?MONTHS[new Date(ib.date+'T12:00:00').getMonth()]+' '+new Date(ib.date+'T12:00:00').getFullYear():'';
+
   document.getElementById('cft-summary').innerHTML=`
     <div style="grid-column:1/-1;background:var(--s1);border:2px solid ${dispColor};border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div>
@@ -2117,6 +2441,10 @@ function renderCashflowTimeline(){
       </div>
       ${daysNext!==null?`<div style="text-align:right"><div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:3px">Próximo ingreso</div><div style="font-size:1.4rem;font-weight:800;color:var(--accent2)">${daysNext} día${daysNext!==1?'s':''}</div></div>`:''}
     </div>
+    ${ibApplied?`<div class="cft-sum-card" style="border-color:${ibColor};cursor:pointer" onclick="openInitialBalanceModal()" title="Editar saldo inicial">
+      <div class="cft-sum-lbl">Saldo inicial (${ibMonthLabel})</div>
+      <div class="cft-sum-val" style="color:${ibColor}">${fmt(+ib.amount)}</div>
+    </div>`:''}
     <div class="cft-sum-card" style="border-color:${openColor}">
       <div class="cft-sum-lbl">Traés del período anterior</div>
       <div class="cft-sum-val" style="color:${openColor}">${fmt(openBal)}</div>
@@ -2146,9 +2474,10 @@ function renderCashflowTimeline(){
 
   // Fila de saldo de arrastre (siempre visible)
   const openBalClass=openBal<0?'cft-bal-neg':openBal>0?'cft-bal-pos':'cft-bal-zero';
+  const openLbl=ibApplied?`Saldo anterior al período <span style="font-size:0.72rem;opacity:.7">(incluye saldo inicial ${ibMonthLabel})</span>`:'Saldo anterior al período';
   html+=`<tr style="background:var(--s2)">
     <td class="cft-date-cell" style="color:var(--muted2)">—</td>
-    <td style="color:var(--muted);font-style:italic;font-size:0.79rem">Saldo anterior al período</td>
+    <td style="color:var(--muted);font-style:italic;font-size:0.79rem">${openLbl}</td>
     <td class="r"></td><td class="r"></td>
     <td class="r ${openBalClass}">${fmt(openBal)}</td>
   </tr>`;
@@ -2194,12 +2523,28 @@ function renderCashflowTimeline(){
   const totalExp=rows.reduce((s,r)=>s+r.expense,0);
   const netTotal=totalInc-totalExp;
   const netColor=netTotal>0?'var(--green)':netTotal<0?'var(--red)':'var(--muted2)';
-  html+=`<tfoot><tr style="background:var(--s2);font-weight:700;font-size:0.83rem">
-    <td colspan="2" style="padding:8px 10px;color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em">Totales del período</td>
+  const netAbs=Math.abs(netTotal);
+  const netTip=netTotal===0
+    ?'Este mes el movimiento neto fue cero — ingresos y egresos se igualaron.'
+    :`Este mes tuviste ${fmt(netAbs)} ${netTotal>0?'más':'menos'} que el mes anterior.`;
+  const finalTip='Este es el saldo total con el que cerrás este mes. Es el dinero disponible al finalizar el período.';
+  const finalBalColor=projBal>0?'var(--green)':projBal<0?'var(--red)':'var(--muted2)';
+  const finalBalBg=projBal>0?'rgba(22,163,74,.07)':projBal<0?'rgba(220,38,38,.07)':'var(--s2)';
+  const finalBalBorder=projBal>0?'rgba(22,163,74,.35)':projBal<0?'rgba(220,38,38,.35)':'var(--border)';
+  html+=`<tfoot>
+  <tr style="background:var(--s2);font-weight:700;font-size:0.83rem">
+    <td colspan="2" style="padding:8px 10px;color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em"><span class="cft-tip" data-tip="${netTip}">Movimiento neto del período</span></td>
     <td class="r cft-inc">${totalInc>0?'+'+fmt(totalInc):''}</td>
     <td class="r cft-exp">${totalExp>0?'−'+fmt(totalExp):''}</td>
     <td class="r" style="color:${netColor}">${netTotal>0?'+':''}${fmt(netTotal)}</td>
-  </tr></tfoot>`;
+  </tr>
+  <tr style="background:${finalBalBg};border-top:2px solid ${finalBalBorder}">
+    <td colspan="2" style="padding:11px 10px;font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em;color:${finalBalColor};font-weight:700"><span class="cft-tip" data-tip="${finalTip}">Saldo final del período</span></td>
+    <td class="r" style="padding:11px 10px"></td>
+    <td class="r" style="padding:11px 10px"></td>
+    <td class="r" style="padding:11px 10px;color:${finalBalColor};font-weight:800;font-size:0.97rem">${fmt(projBal)}</td>
+  </tr>
+  </tfoot>`;
 
   html+='</tbody>';
   tableEl.innerHTML=html;
@@ -2271,7 +2616,7 @@ function addObligation(){
   const name=document.getElementById('o-name').value.trim();
   const monthly=+document.getElementById('o-monthly').value;
   if(!name||!monthly){ showToast('Nombre y pago mensual requeridos','var(--yellow)'); return; }
-  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,note:document.getElementById('o-note').value.trim(),active:true};
+  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,category:document.getElementById('o-category').value||'other',note:document.getElementById('o-note').value.trim(),active:true};
   const data=loadObligations(); data.push(obl); saveObligations(data);
   ['o-name','o-monthly','o-total','o-dueday','o-note'].forEach(id=>document.getElementById(id).value='');
   showToast('Obligación registrada','var(--purple)'); renderObligationsModal(); render();
@@ -2284,7 +2629,7 @@ function deleteObligation(id){
 function registerOblPayment(oblId){
   const obl=loadObligations().find(o=>o.id===oblId); if(!obl) return;
   const selM=+monthSel.value, selY=+yearSel.value;
-  const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,description:`Pago: ${obl.name}`,category:'housing',date:`${selY}-${String(selM).padStart(2,'0')}-${String(obl.dueDay||1).padStart(2,'0')}`,note:OBL_TYPES[obl.type]||obl.type,commitId:oblId,commitType:'obl'};
+  const entry={id:Date.now().toString(),type:'expense',amount:obl.monthlyPayment,description:`Pago: ${obl.name}`,category:obl.category||OBL_CAT[obl.type]||'other',date:`${selY}-${String(selM).padStart(2,'0')}-${String(obl.dueDay||1).padStart(2,'0')}`,note:OBL_TYPES[obl.type]||obl.type,commitId:oblId,commitType:'obl'};
   if(obl.totalDebt>0){const obls=loadObligations();const idx=obls.findIndex(o=>o.id===oblId);if(idx>=0){obls[idx].remainingDebt=Math.max(0,(obls[idx].remainingDebt||obls[idx].totalDebt)-obl.monthlyPayment);saveObligations(obls);}}
   const entries=loadEntries(); entries.push(entry); saveEntries(entries);
   setOblPaid(oblId,selY,selM);
@@ -2503,7 +2848,7 @@ function saveQuickAdd(){
     const name=document.getElementById('qa-o-name').value.trim();
     const monthly=+document.getElementById('qa-o-monthly').value;
     if(!name||!monthly){ showToast('Nombre y pago mensual requeridos','var(--yellow)'); return; }
-    const obl={id:Date.now().toString(),name,type:resolveType('qa-o-type','qa-o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('qa-o-total').value||0,remainingDebt:+document.getElementById('qa-o-total').value||0,dueDay:qaDay,note:document.getElementById('qa-o-note').value.trim(),active:true};
+    const obl={id:Date.now().toString(),name,type:resolveType('qa-o-type','qa-o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('qa-o-total').value||0,remainingDebt:+document.getElementById('qa-o-total').value||0,dueDay:qaDay,category:document.getElementById('qa-o-category').value||'other',note:document.getElementById('qa-o-note').value.trim(),active:true};
     saveObligations([...loadObligations(),obl]);
     showToast('Obligación registrada','var(--purple)');
   } else {
@@ -2714,7 +3059,9 @@ populateCatSelect(document.getElementById('f-category'),'expense');
 populateCatSelect(document.getElementById('qa-category'),'expense');
 populateCatSelect(document.getElementById('fx-category'),'expense');
 populateCatSelect(document.getElementById('qe-category'),'expense');
-['f-category','e-category','qa-category','fx-category','ec-category','qe-category'].forEach(id=>{
+populateCatSelect(document.getElementById('o-category'),'expense');
+populateCatSelect(document.getElementById('qa-o-category'),'expense');
+['f-category','e-category','qa-category','fx-category','ec-category','ec-obl-category','o-category','qa-o-category','qe-category'].forEach(id=>{
   const el=document.getElementById(id); if(el) el.addEventListener('change',()=>onCatChange(el));
 });
 rebuildFilterCat();
@@ -2735,6 +3082,28 @@ if(!localStorage.getItem('obligationsChecked')) document.getElementById('modal-w
 })();
 
 render();
+
+// ── Tooltip global (data-tip) ──
+(function(){
+  const tip=document.createElement('div');
+  tip.style.cssText='position:fixed;background:#1e293b;color:#fff;font-size:0.72rem;line-height:1.5;padding:7px 12px;border-radius:8px;max-width:260px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.35);word-break:normal';
+  document.body.appendChild(tip);
+  let cur=null;
+  document.addEventListener('mouseover',e=>{
+    const el=e.target.closest('[data-tip]');
+    if(!el){tip.style.opacity='0';cur=null;return;}
+    cur=el; tip.textContent=el.dataset.tip; tip.style.opacity='1';
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!cur) return;
+    const x=Math.min(e.clientX+14,window.innerWidth-tip.offsetWidth-8);
+    const y=e.clientY-tip.offsetHeight-10;
+    tip.style.left=x+'px'; tip.style.top=Math.max(4,y)+'px';
+  });
+  document.addEventListener('mouseout',e=>{
+    if(cur&&!cur.contains(e.relatedTarget)){tip.style.opacity='0';cur=null;}
+  });
+})();
 </script>
 </body>
 </html>
