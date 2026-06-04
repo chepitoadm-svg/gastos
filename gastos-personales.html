@@ -750,6 +750,13 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         </div>
         <div class="section">
           <div class="section-head">
+            <span class="section-title">Gasto diario disponible</span>
+            <span class="section-meta" id="daily-budget-meta"></span>
+          </div>
+          <div class="section-body" id="daily-budget-body"></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
             <span class="section-title" id="chart-title">Gastos por categoría</span>
           </div>
           <div class="section-body" id="chart"></div>
@@ -783,6 +790,13 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
             <div class="health-metrics-grid" id="health-metrics"></div>
             <div class="health-recs" id="health-recs"></div>
           </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <span class="section-title">Meta de ahorro del mes</span>
+            <span class="section-meta" id="savings-goal-period"></span>
+          </div>
+          <div class="section-body" id="savings-goal-body"></div>
         </div>
       </div>
 
@@ -1125,14 +1139,14 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
 <div class="overlay" id="modal-initial-balance">
   <div class="modal" style="max-width:400px">
     <h2>Saldo inicial</h2>
-    <div class="modal-sub">El saldo que tenías antes de empezar a usar la app. Se suma como punto de partida al flujo de caja.</div>
+    <div class="modal-sub">El monto con el que arranca el mes seleccionado. Todos los cálculos del flujo parten desde este número.</div>
     <div class="field">
-      <label>Monto (puede ser negativo si estabas en rojo)</label>
+      <label>Monto de arranque (puede ser negativo)</label>
       <input type="number" id="ib-amount" placeholder="0.00" step="0.01" />
     </div>
     <div class="row2">
       <div class="field">
-        <label>Mes de referencia</label>
+        <label>Mes</label>
         <select id="ib-month">
           <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
           <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
@@ -1145,7 +1159,6 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
         <input type="number" id="ib-year" placeholder="2025" min="2000" max="2099" />
       </div>
     </div>
-    <div style="font-size:0.78rem;color:var(--muted2);margin-top:-6px;margin-bottom:12px">Ej: si empezaste en junio, seleccioná <strong>Mayo</strong> e ingresá lo que te quedó ese mes.</div>
     <div class="modal-footer">
       <button class="btn ghost md" onclick="closeModal('modal-initial-balance')">Cancelar</button>
       <button class="btn danger sm" id="ib-delete-btn" onclick="deleteInitialBalance()" style="display:none">Eliminar</button>
@@ -1205,9 +1218,19 @@ const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto',
 /* ── Data ── */
 function loadEntries()    { return JSON.parse(localStorage.getItem('entries')||localStorage.getItem('expenses')||'[]'); }
 function saveEntries(d)   { localStorage.setItem('entries',JSON.stringify(d)); }
-function loadObligations(){ return JSON.parse(localStorage.getItem('obligations')||'[]'); }
+function _addSince(item){
+  if(!item.since&&item.id){
+    const ts=+item.id;
+    if(!isNaN(ts)&&ts>1000000000000){
+      const d=new Date(ts);
+      item.since=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    }
+  }
+  return item;
+}
+function loadObligations(){ return JSON.parse(localStorage.getItem('obligations')||'[]').map(_addSince); }
 function saveObligations(d){ localStorage.setItem('obligations',JSON.stringify(d)); }
-function loadFixed()      { return JSON.parse(localStorage.getItem('fixedExpenses')||'[]'); }
+function loadFixed()      { return JSON.parse(localStorage.getItem('fixedExpenses')||'[]').map(_addSince); }
 function saveFixed(d)     { localStorage.setItem('fixedExpenses',JSON.stringify(d)); }
 
 /* ── Currency ── */
@@ -1577,6 +1600,8 @@ function render(){
 
   /* Salud financiera */
   renderHealth(periodEntries, selM, selY);
+  renderDailyBudget();
+  renderSavingsGoal(selM,selY);
 
   /* Compromisos tab */
   renderCompromisos(selY,selM);
@@ -1663,8 +1688,9 @@ function getFlowPendingCommitments(periodStart,periodEnd){
   const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   const fromDate=new Date(today.getTime()+86400000);
   if(fromDate>periodEnd) return [];
-  const obls=loadObligations().filter(o=>o.active!==false);
-  const fixeds=loadFixed().filter(f=>f.active!==false);
+  const dispTodayPeriod=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&(!o.since||dispTodayPeriod>=o.since));
+  const fixeds=loadFixed().filter(f=>f.active!==false&&(!f.since||dispTodayPeriod>=f.since));
   const pending=[];
   const months=new Set();
   let cur=new Date(fromDate.getFullYear(),fromDate.getMonth(),1);
@@ -1762,8 +1788,9 @@ function renderHealth(periodEntries, selM, selY){
   const inc    = sumBy(periodEntries,'income');
   const exp    = sumBy(periodEntries,'expense');
   const varExp = periodEntries.filter(e=>(e.type||'expense')==='expense'&&!e.commitId).reduce((s,e)=>s+ +e.amount,0);
-  const obls = loadObligations().filter(o=>o.active!==false);
-  const fxs  = loadFixed().filter(f=>f.active!==false);
+  const healthPeriod=`${selY}-${String(selM).padStart(2,'0')}`;
+  const obls = loadObligations().filter(o=>o.active!==false&&(!o.since||healthPeriod>=o.since));
+  const fxs  = loadFixed().filter(f=>f.active!==false&&(!f.since||healthPeriod>=f.since));
   const oblTotal = obls.reduce((s,o)=>s+ +o.monthlyPayment,0);
   const fxTotal  = fxs.reduce((s,f)=>s+ +f.amount,0);
   const commitTotal = oblTotal+fxTotal;
@@ -2036,7 +2063,7 @@ function renderMovimientos(){
   const allCatsMap={...getCats('expense'),...getCats('income')};
   const m=+monthSel.value, y=+yearSel.value;
   const periodPrefix=`${y}-${String(m).padStart(2,'0')}`;
-  const allFixed=loadFixed().filter(f=>f.active!==false);
+  const allFixed=loadFixed().filter(f=>f.active!==false&&(!f.since||periodPrefix>=f.since));
   document.getElementById('tx-count').textContent=`${sorted.length} registro${sorted.length!==1?'s':''}`;
   const el=document.getElementById('tx-list');
 
@@ -2155,7 +2182,7 @@ function buildCashflowEvents(selM,selY){
     const dd=Math.min(f.dueDay,dim);
     if(dd<startDay||dd>endDay) continue;
     if(isFixedPaid(f.id,selY,selM)||paidKeys.has('fx_'+f.id)) continue;
-    events.push({date:new Date(selY,selM-1,dd),desc:f.name,income:0,expense:+f.amount,status:'pending',id:'pf_'+f.id});
+    events.push({date:new Date(selY,selM-1,dd),desc:f.name,income:0,expense:+f.amount,status:'pending',id:'pf_'+f.id,isCommit:true});
   }
 
   // 3. Obligaciones pendientes
@@ -2164,7 +2191,7 @@ function buildCashflowEvents(selM,selY){
     const dd=Math.min(o.dueDay,dim);
     if(dd<startDay||dd>endDay) continue;
     if(isOblPaid(o.id,selY,selM)||paidKeys.has('obl_'+o.id)) continue;
-    events.push({date:new Date(selY,selM-1,dd),desc:o.name,income:0,expense:+o.monthlyPayment,status:'pending',id:'po_'+o.id});
+    events.push({date:new Date(selY,selM-1,dd),desc:o.name,income:0,expense:+o.monthlyPayment,status:'pending',id:'po_'+o.id,isCommit:true});
   }
 
   // 4. Ingresos previstos (futuro, según patrón histórico)
@@ -2189,39 +2216,47 @@ function buildCashflowEvents(selM,selY){
     }
   }
 
-  // 5. Arrastrados de meses anteriores sin pagar — cada mes por separado
-  for(let mo=1;mo<=3;mo++){
-    const pd=new Date(selY,selM-1-mo,1);
-    const pY=pd.getFullYear(),pM=pd.getMonth()+1;
-    const pDim=new Date(pY,pM,0).getDate();
-    const pPeriod=`${pY}-${String(pM).padStart(2,'0')}`;
-    for(const o of obls){
-      if(!o.dueDay) continue;
-      if(pPeriod<(o.since||'0000-00')) continue; // no arrastrar antes de creación
-      const cKey='obl_'+o.id;
-      if(paidKeys.has(cKey)) continue; // ya pagado en el período actual
-      if(!isOblPaid(o.id,pY,pM)){
+  // 5. Arrastrados: egresos fijos y obligaciones de meses anteriores sin pagar
+  // Cada (item × mes) no pagado genera un arrastrado independiente, hasta 12 meses atrás
+  if(cftFilter==='all'){ // solo en vista completa del mes, no en quincenas
+    for(let mo=1;mo<=12;mo++){
+      const pd=new Date(selY,selM-1-mo,1);
+      const pY=pd.getFullYear(), pM=pd.getMonth()+1;
+      const pDim=new Date(pY,pM,0).getDate();
+      const pPeriod=`${pY}-${String(pM).padStart(2,'0')}`;
+      let addedAny=false;
+      for(const o of obls){
+        if(!o.dueDay) continue;
+        if(pPeriod<(o.since||'0000-00')) continue;
+        if(isOblPaid(o.id,pY,pM)) continue;
         const origDay=Math.min(o.dueDay,pDim);
-        events.push({date:new Date(selY,selM-1,startDay-(mo*0.001)),// orden estable
+        events.push({
+          date:new Date(selY,selM-1,startDay-(mo*0.001)),
           origDueDate:new Date(pY,pM-1,origDay),
           desc:o.name,income:0,expense:+o.monthlyPayment,
           status:'carried',carriedFrom:MONTHS[pM-1],carriedYear:pY,carriedMonth:pM,
-          oblId:o.id,id:'carry_'+cKey+'_'+pY+'_'+pM});
+          oblId:o.id,id:'carry_obl_'+o.id+'_'+pY+'_'+pM,isCommit:true
+        });
+        addedAny=true;
       }
-    }
-    for(const f of fixeds){
-      if(!f.dueDay) continue;
-      if(pPeriod<(f.since||'0000-00')) continue; // no arrastrar antes de creación
-      const cKey='fx_'+f.id;
-      if(paidKeys.has(cKey)) continue;
-      if(!isFixedPaid(f.id,pY,pM)){
+      for(const f of fixeds){
+        if(!f.dueDay) continue;
+        if(pPeriod<(f.since||'0000-00')) continue;
+        if(isFixedPaid(f.id,pY,pM)) continue;
         const origDay=Math.min(f.dueDay,pDim);
-        events.push({date:new Date(selY,selM-1,startDay-(mo*0.001)),
+        events.push({
+          date:new Date(selY,selM-1,startDay-(mo*0.001)),
           origDueDate:new Date(pY,pM-1,origDay),
           desc:f.name,income:0,expense:+f.amount,
           status:'carried',carriedFrom:MONTHS[pM-1],carriedYear:pY,carriedMonth:pM,
-          fxId:f.id,id:'carry_'+cKey+'_'+pY+'_'+pM});
+          fxId:f.id,id:'carry_fx_'+f.id+'_'+pY+'_'+pM,isCommit:true
+        });
+        addedAny=true;
       }
+      // Si no hay nada sin pagar en este mes, no hace falta buscar más atrás
+      // (solo si el mes ya pasó completamente)
+      const pEnd=new Date(pY,pM-1,pDim);
+      if(!addedAny&&pEnd<new Date(selY,selM-1,startDay)) break;
     }
   }
 
@@ -2230,21 +2265,23 @@ function buildCashflowEvents(selM,selY){
 }
 
 /* ── Saldo inicial ── */
-function loadInitialBalance(){ return JSON.parse(localStorage.getItem('initial_balance')||'null'); }
+function loadInitialBalance(m,y){
+  if(m!==undefined&&y!==undefined){
+    const k=`initial_balance_${y}_${String(m).padStart(2,'0')}`;
+    const pm=JSON.parse(localStorage.getItem(k)||'null');
+    if(pm) return pm;
+  }
+  // backward compat: clave global antigua
+  return JSON.parse(localStorage.getItem('initial_balance')||'null');
+}
 function saveInitialBalance(data){ localStorage.setItem('initial_balance',JSON.stringify(data)); }
 function openInitialBalanceModal(){
-  const ib=loadInitialBalance();
-  const now2=new Date();
+  // Defecto: el mes actualmente visible en el flujo
+  const selM=+monthSel.value, selY=+yearSel.value;
+  const ib=loadInitialBalance(selM,selY);
   document.getElementById('ib-amount').value=ib?ib.amount:'';
-  if(ib&&ib.date){
-    const d=new Date(ib.date+'T12:00:00');
-    document.getElementById('ib-month').value=d.getMonth()+1;
-    document.getElementById('ib-year').value=d.getFullYear();
-  } else {
-    const prev=new Date(now2.getFullYear(),now2.getMonth()-1,1);
-    document.getElementById('ib-month').value=prev.getMonth()+1;
-    document.getElementById('ib-year').value=prev.getFullYear();
-  }
+  document.getElementById('ib-month').value=selM;
+  document.getElementById('ib-year').value=selY;
   document.getElementById('ib-delete-btn').style.display=ib?'inline-flex':'none';
   document.getElementById('modal-initial-balance').classList.add('open');
 }
@@ -2254,15 +2291,17 @@ function saveInitialBalanceModal(){
   const m=+document.getElementById('ib-month').value;
   const y=+document.getElementById('ib-year').value;
   if(!y||y<2000||y>2099){ showToast('Año inválido','var(--yellow)'); return; }
-  const lastDay=new Date(y,m,0).getDate();
-  const date=`${y}-${String(m).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
-  saveInitialBalance({amount:+amount,date});
+  const k=`initial_balance_${y}_${String(m).padStart(2,'0')}`;
+  localStorage.setItem(k,JSON.stringify({amount:+amount,month:m,year:y}));
   closeModal('modal-initial-balance');
   showToast('Saldo inicial guardado','var(--green)');
   renderCashflowTimeline();
 }
 function deleteInitialBalance(){
-  localStorage.removeItem('initial_balance');
+  const m=+document.getElementById('ib-month').value;
+  const y=+document.getElementById('ib-year').value;
+  const k=`initial_balance_${y}_${String(m).padStart(2,'0')}`;
+  localStorage.removeItem(k);
   closeModal('modal-initial-balance');
   showToast('Saldo inicial eliminado','var(--red)');
   renderCashflowTimeline();
@@ -2272,25 +2311,168 @@ function getOpeningBalance(selM,selY,startDay){
   const cutoff=new Date(selY,selM-1,startDay);
   let bal=0;
   let ibDate=null;
-  const ib=loadInitialBalance();
-  if(ib&&ib.date){
-    const d=new Date(ib.date+'T12:00:00');
-    const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-    if(dd<cutoff){
-      bal=+ib.amount; // el saldo inicial es el punto de partida, no se acumula encima del historial
-      ibDate=dd;      // entradas en esta fecha o antes ya están "incluidas" en el monto manual
+
+  // IB por mes: si existe para (selM,selY), úsalo como base e incluye solo entradas de ese mes
+  const pmib=loadInitialBalance(selM,selY);
+  if(pmib&&pmib.month===selM&&pmib.year===selY){
+    bal=+pmib.amount;
+    // ibDate = último día del mes anterior → entradas desde el día 1 del mes se suman encima
+    ibDate=new Date(selY,selM-1,0);
+  } else {
+    // backward compat: clave global con fecha
+    const oib=JSON.parse(localStorage.getItem('initial_balance')||'null');
+    if(oib&&oib.date){
+      const d=new Date(oib.date+'T12:00:00');
+      const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+      if(dd<cutoff){ bal=+oib.amount; ibDate=dd; }
     }
   }
+
   for(const e of loadEntries()){
     const d=new Date(e.date+'T12:00:00');
     const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
     if(dd>=cutoff) continue;
-    if(ibDate!==null&&dd<=ibDate) continue; // ignorar entradas cubiertas por el saldo inicial
+    if(ibDate!==null&&dd<=ibDate) continue;
     const t=e.type||'expense';
     if(t==='income') bal+= +e.amount;
     else if(t==='expense') bal-= +e.amount;
   }
   return bal;
+}
+
+function renderDailyBudget(){
+  const el=document.getElementById('daily-budget-body');
+  if(!el) return;
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const tomorrow=new Date(today.getTime()+86400000);
+
+  // Saldo real actual: todas las transacciones hasta hoy + saldo inicial
+  const trueBal=getOpeningBalance(tomorrow.getMonth()+1,tomorrow.getFullYear(),tomorrow.getDate());
+
+  // Próximo ingreso futuro registrado
+  const allIncs=loadEntries().filter(e=>(e.type||'expense')==='income');
+  const futIncs=allIncs.filter(e=>new Date(e.date+'T12:00:00')>today).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(!futIncs.length){
+    el.innerHTML='<div style="color:var(--muted2);font-size:0.82rem;text-align:center;padding:10px 0">Sin ingresos futuros registrados — agregá tu próximo cobro para activar esta sección.</div>';
+    document.getElementById('daily-budget-meta').textContent='';
+    return;
+  }
+
+  const nextIncDateObj=new Date(futIncs[0].date+'T12:00:00');
+  const daysToNext=Math.max(1,Math.round((nextIncDateObj-today)/86400000));
+  const MN2=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const nextIncLabel=`${nextIncDateObj.getDate()} de ${MN2[nextIncDateObj.getMonth()]}`;
+
+  // Compromisos pendientes que vencen antes del próximo ingreso
+  const selM=today.getMonth()+1,selY=today.getFullYear();
+  const selPer=`${selY}-${String(selM).padStart(2,'0')}`;
+  const dimM=new Date(selY,selM,0).getDate();
+  const todayDay=today.getDate();
+  const niDay=nextIncDateObj.getDate(),niMonth=nextIncDateObj.getMonth()+1,niYear=nextIncDateObj.getFullYear();
+  const pFijos=loadFixed().filter(f=>f.active!==false&&(!f.since||selPer>=f.since)&&f.dueDay&&!isFixedPaid(f.id,selY,selM)&&Math.min(f.dueDay,dimM)>todayDay);
+  const pObls=loadObligations().filter(o=>o.active!==false&&(!o.since||selPer>=o.since)&&o.dueDay&&!isOblPaid(o.id,selY,selM)&&Math.min(o.dueDay,dimM)>todayDay);
+  let commBefore=0;
+  if(niMonth===selM&&niYear===selY){
+    commBefore+=pFijos.filter(f=>Math.min(f.dueDay,dimM)<niDay).reduce((s,f)=>s+ +f.amount,0)
+              +pObls.filter(o=>Math.min(o.dueDay,dimM)<niDay).reduce((s,o)=>s+ +o.monthlyPayment,0);
+  } else {
+    commBefore+=pFijos.reduce((s,f)=>s+ +f.amount,0)+pObls.reduce((s,o)=>s+ +o.monthlyPayment,0);
+  }
+
+  const disponible=trueBal-commBefore;
+  const daily=disponible>0?disponible/daysToNext:0;
+  const dispColor=disponible>=0?'var(--green)':'var(--red)';
+  const dailyColor=daily>0?'var(--accent2)':'var(--red)';
+
+  document.getElementById('daily-budget-meta').textContent=`cobro en ${daysToNext} día${daysToNext!==1?'s':''} · ${nextIncLabel}`;
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">
+        <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px">Por día hasta cobrar</div>
+        <div style="font-size:2.2rem;font-weight:900;line-height:1;color:${dailyColor}">${daily>0?fmt(daily)+'/día':'⚠ Sin margen'}</div>
+        <div style="font-size:0.72rem;color:var(--muted2);margin-top:4px">${disponible<0?`Saldo insuficiente — revisá compromisos pendientes`:`${fmt(disponible)} ÷ ${daysToNext} día${daysToNext!==1?'s':''}`}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center;min-width:76px">
+          <div style="font-size:0.62rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Días hasta cobrar</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--accent2);line-height:1">${daysToNext}</div>
+          <div style="font-size:0.65rem;color:var(--muted2);margin-top:2px">${nextIncLabel}</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid ${disponible>=0?'rgba(22,163,74,.25)':'rgba(220,38,38,.25)'};border-radius:8px;padding:10px 14px;text-align:center;min-width:100px">
+          <div style="font-size:0.62rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Disponible hoy</div>
+          <div style="font-size:1.1rem;font-weight:700;color:${dispColor};line-height:1">${fmt(disponible)}</div>
+          <div style="font-size:0.62rem;color:var(--muted2);margin-top:2px">${commBefore>0?`&minus;${fmt(commBefore)} comprometido`:'sin compromisos pendientes'}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderSavingsGoal(selM,selY){
+  const el=document.getElementById('savings-goal-body');
+  if(!el) return;
+  const goalKey=`savings_goal_${selY}_${String(selM).padStart(2,'0')}`;
+  const goal=+(localStorage.getItem(goalKey)||0);
+
+  const allM=loadEntries().filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getMonth()+1===selM&&d.getFullYear()===selY;});
+  const incM=sumBy(allM,'income'),expM=sumBy(allM,'expense'),balM=incM-expM;
+
+  document.getElementById('savings-goal-period').textContent=MONTHS[selM-1]+' '+selY;
+
+  const pct=goal>0?Math.min(100,Math.max(0,balM/goal*100)):0;
+  const barColor=pct>=100?'var(--green)':pct>=70?'var(--accent2)':pct>=40?'var(--yellow)':'var(--red)';
+  const balColor=balM>=0?'var(--green)':'var(--red)';
+
+  let statusMsg='',statusColor='var(--muted2)';
+  if(goal>0){
+    if(balM>=goal){statusMsg=`Meta cumplida — superás la meta en ${fmt(balM-goal)}`;statusColor='var(--green)';}
+    else if(balM>0){statusMsg=`Faltan ${fmt(goal-balM)} para cumplir la meta (${pct.toFixed(0)}%)`;statusColor=pct>=70?'var(--accent2)':'var(--yellow)';}
+    else{statusMsg='Los gastos superan los ingresos en este período';statusColor='var(--red)';}
+  }
+
+  el.innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:${goal>0?'14':'0'}px">
+      <input type="number" id="savings-goal-input" placeholder="Meta de ahorro..." step="1" min="0"
+        value="${goal||''}"
+        style="flex:1;min-width:150px;max-width:230px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 11px;font-size:0.88rem;outline:none"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')saveSavingsGoal(${selM},${selY})" />
+      <button class="btn acc sm" onclick="saveSavingsGoal(${selM},${selY})">Guardar meta</button>
+      ${goal?`<button class="btn ghost sm" onclick="clearSavingsGoal(${selM},${selY})">Quitar</button>`:''}
+    </div>
+    ${goal>0?`
+    <div class="sum-grid cols3" style="margin-bottom:12px">
+      <div class="sum-cell green"><div class="sum-lbl">Ingresos</div><div class="sum-val" style="color:var(--green)">${fmt(incM)}</div></div>
+      <div class="sum-cell red"><div class="sum-lbl">Gastos</div><div class="sum-val" style="color:var(--red)">${fmt(expM)}</div></div>
+      <div class="sum-cell ${balM>=goal?'green':balM>=0?'accent':'red'}"><div class="sum-lbl">Balance</div><div class="sum-val" style="color:${balColor}">${fmt(balM)}</div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted2);margin-bottom:5px">
+        <span>Progreso hacia la meta</span>
+        <span><strong style="color:${barColor}">${pct.toFixed(0)}%</strong> de ${fmt(goal)}</span>
+      </div>
+      <div style="height:12px;background:var(--s2);border-radius:99px;overflow:hidden;border:1px solid var(--border)">
+        <div style="height:100%;border-radius:99px;background:${barColor};width:${pct.toFixed(1)}%;transition:width .5s"></div>
+      </div>
+    </div>
+    <div style="font-size:0.81rem;font-weight:600;color:${statusColor}">${statusMsg}</div>`
+    :'<div style="color:var(--muted2);font-size:0.8rem;margin-top:4px">Ingresá una meta para ver tu progreso mes a mes.</div>'}`;
+}
+
+function saveSavingsGoal(selM,selY){
+  const input=document.getElementById('savings-goal-input');
+  if(!input) return;
+  const val=+input.value;
+  const key=`savings_goal_${selY}_${String(selM).padStart(2,'0')}`;
+  if(!val||val<=0) localStorage.removeItem(key);
+  else localStorage.setItem(key,val);
+  showToast(val>0?'Meta guardada':'Meta eliminada','var(--accent)');
+  renderSavingsGoal(selM,selY);
+}
+
+function clearSavingsGoal(selM,selY){
+  localStorage.removeItem(`savings_goal_${selY}_${String(selM).padStart(2,'0')}`);
+  renderSavingsGoal(selM,selY);
 }
 
 function renderCashflowAlerts(){
@@ -2477,7 +2659,7 @@ function renderCashflowTimeline(){
   const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   const {events,startDay,endDay}=buildCashflowEvents(selM,selY);
 
-  // Saldo de arrastre: lo que quedó de todos los períodos anteriores
+  // Saldo de arranque: transacciones reales + IB manual del mes si está configurado
   const openBal=getOpeningBalance(selM,selY,startDay);
 
   // Etiqueta del período
@@ -2487,21 +2669,23 @@ function renderCashflowTimeline(){
   else if(cftFilter==='q2') label=`16–${endDay} ${mName} ${selY}`;
   document.getElementById('cft-period-label').textContent=`Flujo · ${label}`;
 
-  // Balance corrido DESDE el saldo de arrastre
-  let balance=openBal, currentBal=openBal, pendingExpenses=0, pendingIncome=0;
-  let seenActual=false;
+  // Balance corrido DESDE el saldo de arrastre (para proyecciones y tabla)
+  let balance=openBal, pendingExpenses=0, pendingIncome=0;
   const rows=events.map(ev=>{
     balance+=ev.income-ev.expense;
     if(ev.status==='pending'||ev.status==='predicted'||ev.status==='carried'){
       pendingExpenses+=ev.expense;
       pendingIncome+=ev.income;
     }
-    if(ev.status==='actual'){currentBal=balance; seenActual=true;}
     return {...ev,bal:balance};
   });
-  if(!seenActual) currentBal=openBal;
-  const pendingTotal=pendingExpenses; // para la card "Comprometido"
+  const pendingTotal=pendingExpenses;
   const projBal=balance;
+
+  // Saldo real: openBal + ingresos reales recibidos - egresos reales pagados hasta hoy
+  const trueBal=rows
+    .filter(r=>r.status==='actual'&&r.date<=today)
+    .reduce((s,r)=>s+r.income-r.expense, openBal);
 
   // Próximo ingreso
   let daysNext=null;
@@ -2522,32 +2706,105 @@ function renderCashflowTimeline(){
     }
   }
 
-  // Si el ingreso previsto cubre los compromisos, el saldo actual queda libre completo.
-  // Solo se le resta al saldo lo que el ingreso NO alcanza a cubrir.
-  const uncovered=Math.max(0,pendingExpenses-pendingIncome);
-  const disponible=currentBal-uncovered;
-  const dispColor=disponible>0?'var(--green)':disponible<0?'var(--red)':'var(--muted2)';
+  // ── Cálculo quincena ──
+  const todayDay=today.getDate();
+  const isFirstQ=todayDay<=15;
+  const qEndDay=isFirstQ?15:new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
+  const qEndDate=new Date(today.getFullYear(),today.getMonth(),qEndDay);
+  const selPer=`${selY}-${String(selM).padStart(2,'0')}`;
+  const dimM=new Date(selY,selM,0).getDate();
+
+  // Gastos fijos pendientes hasta fin de quincena
+  const qFijos=loadFixed()
+    .filter(f=>f.active!==false&&(!f.since||selPer>=f.since)&&f.dueDay)
+    .filter(f=>!isFixedPaid(f.id,selY,selM)&&Math.min(f.dueDay,dimM)<=qEndDay)
+    .reduce((s,f)=>s+ +f.amount,0);
+
+  // Obligaciones pendientes hasta fin de quincena
+  const qObls=loadObligations()
+    .filter(o=>o.active!==false&&(!o.since||selPer>=o.since)&&o.dueDay)
+    .filter(o=>!isOblPaid(o.id,selY,selM)&&Math.min(o.dueDay,dimM)<=qEndDay)
+    .reduce((s,o)=>s+ +o.monthlyPayment,0);
+
+  // Arrastrados de meses anteriores (ya vencidos, siempre cuentan)
+  const qCarried=rows.filter(r=>r.status==='carried').reduce((s,r)=>s+r.expense,0);
+
+  const qCommitted=qFijos+qObls+qCarried;
+
+  // Ingresos que entran entre mañana y fin de quincena (cubren los egresos del período)
+  const qIncome=rows
+    .filter(r=>r.income>0&&r.date>today&&r.date<=qEndDate&&
+      (r.status==='actual'||r.status==='predicted'))
+    .reduce((s,r)=>s+r.income,0);
+
   const openColor=openBal>=0?'var(--green)':'var(--red)';
 
-  const ib=loadInitialBalance();
-  const ibApplied=ib&&ib.date&&new Date(ib.date+'T12:00:00')<new Date(selY,selM-1,startDay);
+  // Próximo ingreso real: monto y fecha del primer ingreso futuro registrado
+  let nextIncAmount=0,nextIncDateObj=null,nextIncLabel=null;
+  if(futIncs.length){
+    nextIncDateObj=new Date(futIncs[0].date+'T12:00:00');
+    nextIncAmount=+futIncs[0].amount;
+    const MN2=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    nextIncLabel=`${nextIncDateObj.getDate()} de ${MN2[nextIncDateObj.getMonth()]}`;
+  }
+
+  // commBeforeNextInc: vencen después de hoy y ANTES del próximo ingreso (para "Disponible hoy")
+  // commUntilNextInc:  vencen después de hoy y HASTA el próximo ingreso inclusive (para "Disponible después")
+  let commBeforeNextInc=qCarried, commUntilNextInc=qCarried;
+  if(nextIncDateObj){
+    const niDay=nextIncDateObj.getDate();
+    const niMonth=nextIncDateObj.getMonth()+1;
+    const niYear=nextIncDateObj.getFullYear();
+    if(niMonth===selM&&niYear===selY){
+      const pFijos=loadFixed().filter(f=>f.active!==false&&(!f.since||selPer>=f.since)&&f.dueDay&&!isFixedPaid(f.id,selY,selM)&&Math.min(f.dueDay,dimM)>todayDay);
+      const pObls=loadObligations().filter(o=>o.active!==false&&(!o.since||selPer>=o.since)&&o.dueDay&&!isOblPaid(o.id,selY,selM)&&Math.min(o.dueDay,dimM)>todayDay);
+      commBeforeNextInc+=pFijos.filter(f=>Math.min(f.dueDay,dimM)<niDay).reduce((s,f)=>s+ +f.amount,0)
+                        +pObls.filter(o=>Math.min(o.dueDay,dimM)<niDay).reduce((s,o)=>s+ +o.monthlyPayment,0);
+      commUntilNextInc+=pFijos.filter(f=>Math.min(f.dueDay,dimM)<=niDay).reduce((s,f)=>s+ +f.amount,0)
+                       +pObls.filter(o=>Math.min(o.dueDay,dimM)<=niDay).reduce((s,o)=>s+ +o.monthlyPayment,0);
+    } else {
+      commBeforeNextInc+=qFijos+qObls;
+      commUntilNextInc+=qFijos+qObls;
+    }
+  }
+
+  // Disponible hoy = saldo real - compromisos que vencen antes de cobrar
+  const disponibleHoy=nextIncDateObj!==null?trueBal-commBeforeNextInc:trueBal;
+  const dispHoyColor=disponibleHoy>=0?'var(--green)':'var(--red)';
+  const dispHoySub=nextIncDateObj!==null&&commBeforeNextInc>0
+    ?`Saldo real &minus; ${fmt(commBeforeNextInc)} que vence antes del ${nextIncLabel}`
+    :'Saldo real sin compromisos pendientes antes de cobrar';
+
+  const disponibleDespues=nextIncDateObj!==null?trueBal+nextIncAmount-commUntilNextInc:null;
+  const dispDespColor=disponibleDespues!==null?(disponibleDespues>=0?'var(--green)':'var(--red)'):'var(--muted2)';
+  const dispDespSub=nextIncDateObj!==null
+    ?(commUntilNextInc>0
+      ?`+${fmt(nextIncAmount)} cobro &minus; ${fmt(commUntilNextInc)} comprometido`
+      :`+${fmt(nextIncAmount)} cobro`)
+    :'';
+
+  const ib=loadInitialBalance(selM,selY);
+  const ibApplied=!!(ib&&ib.month===selM&&ib.year===selY);
   const ibColor=ib&&+ib.amount>=0?'var(--green)':'var(--red)';
-  const ibMonthLabel=ib&&ib.date?MONTHS[new Date(ib.date+'T12:00:00').getMonth()]+' '+new Date(ib.date+'T12:00:00').getFullYear():'';
+  const ibMonthLabel=ib?MONTHS[(ib.month||1)-1]+' '+(ib.year||selY):'';
 
   document.getElementById('cft-summary').innerHTML=`
-    <div style="grid-column:1/-1;background:var(--s1);border:2px solid ${dispColor};border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);margin-bottom:4px">Podés gastar ahora mismo</div>
-        <div style="font-size:2.4rem;font-weight:900;line-height:1;color:${dispColor}">${fmt(disponible)}</div>
-        <div style="font-size:0.73rem;color:var(--muted2);margin-top:6px">
-          ${uncovered===0&&pendingIncome>0
-            ? `El ingreso previsto <strong style="color:var(--green)">${fmt(pendingIncome)}</strong> cubre todos tus compromisos — los <strong>${fmt(currentBal)}</strong> son libres`
-            : uncovered>0
-              ? `Saldo <strong style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</strong> &minus; ${fmt(uncovered)} que el ingreso no alcanza a cubrir`
-              : `Saldo actual <strong style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</strong>`}
+    <div style="grid-column:1/-1;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px">
+      <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);margin-bottom:12px">Podés gastar ahora mismo</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px;background:var(--bg);border:1px solid ${dispHoyColor==='var(--green)'?'rgba(22,163,74,.3)':'rgba(220,38,38,.3)'};border-radius:8px;padding:14px">
+          <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px">Disponible hoy</div>
+          <div style="font-size:1.9rem;font-weight:800;line-height:1;color:${dispHoyColor}">${disponibleHoy<0?'⚠ ':''}${fmt(disponibleHoy)}</div>
+          <div style="font-size:0.71rem;color:var(--muted2);margin-top:5px">${dispHoySub}</div>
         </div>
+        ${nextIncDateObj!==null
+          ?`<div style="flex:1;min-width:140px;background:var(--bg);border:1px solid ${disponibleDespues>=0?'rgba(22,163,74,.3)':'rgba(220,38,38,.3)'};border-radius:8px;padding:14px">
+          <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px">Disponible después del ${nextIncLabel}</div>
+          <div style="font-size:1.9rem;font-weight:800;line-height:1;color:${dispDespColor}">${disponibleDespues<0?'⚠ ':''}${fmt(disponibleDespues)}</div>
+          <div style="font-size:0.71rem;color:var(--muted2);margin-top:5px">${dispDespSub}</div>
+        </div>`
+          :`<div style="flex:1;min-width:140px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:0.8rem">Sin próximos ingresos registrados</div>`}
       </div>
-      ${daysNext!==null?`<div style="text-align:right"><div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:3px">Próximo ingreso</div><div style="font-size:1.4rem;font-weight:800;color:var(--accent2)">${daysNext} día${daysNext!==1?'s':''}</div></div>`:''}
     </div>
     ${ibApplied?`<div class="cft-sum-card" style="border-color:${ibColor};cursor:pointer" onclick="openInitialBalanceModal()" title="Editar saldo inicial">
       <div class="cft-sum-lbl">Saldo inicial (${ibMonthLabel})</div>
@@ -2559,7 +2816,7 @@ function renderCashflowTimeline(){
     </div>
     <div class="cft-sum-card">
       <div class="cft-sum-lbl">Saldo actual real</div>
-      <div class="cft-sum-val" style="color:${currentBal>=0?'var(--green)':'var(--red)'}">${fmt(currentBal)}</div>
+      <div class="cft-sum-val" style="color:${trueBal>=0?'var(--green)':'var(--red)'}">${fmt(trueBal)}</div>
     </div>
     <div class="cft-sum-card">
       <div class="cft-sum-lbl">Comprometido pendiente</div>
@@ -2899,14 +3156,15 @@ function autoLinkToCommit(entry){
   if((entry.type||'expense')!=='expense'||entry.commitId) return;
   const d=new Date(entry.date+'T12:00:00');
   const y=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
-  const obls=loadObligations().filter(o=>o.active!==false&&!isOblPaid(o.id,y,m));
+  const ep=`${y}-${String(m).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&!isOblPaid(o.id,y,m)&&(!o.since||ep>=o.since));
   // Requiere monto Y día exacto para evitar falsos positivos
   const obl=obls.find(o=>+o.monthlyPayment===+entry.amount&&o.dueDay===day);
   if(obl){
     const all=loadEntries(); const i=all.findIndex(e=>e.id===entry.id);
     if(i>=0){all[i].commitId=obl.id; all[i].commitType='obl'; saveEntries(all);} return;
   }
-  const fixed=loadFixed().filter(f=>f.active!==false&&!isFixedPaid(f.id,y,m));
+  const fixed=loadFixed().filter(f=>f.active!==false&&!isFixedPaid(f.id,y,m)&&(!f.since||ep>=f.since));
   const fx=fixed.find(f=>+f.amount===+entry.amount&&f.dueDay===day);
   if(fx){
     const all=loadEntries(); const i=all.findIndex(e=>e.id===entry.id);
@@ -3076,8 +3334,9 @@ let calSelectedDay=null;
 function renderCalendar(){
   const m=+monthSel.value, y=+yearSel.value;
   document.getElementById('cal-month-title').textContent=MONTHS[m-1]+' '+y;
-  const obls=loadObligations().filter(o=>o.active!==false);
-  const fixedList=loadFixed().filter(f=>f.active!==false);
+  const calPeriod=`${y}-${String(m).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&(!o.since||calPeriod>=o.since));
+  const fixedList=loadFixed().filter(f=>f.active!==false&&(!f.since||calPeriod>=f.since));
   const entries=loadEntries().filter(e=>{const d=new Date(e.date+'T12:00:00');return d.getMonth()+1===m&&d.getFullYear()===y;});
   const entryMap={};
   for(const e of entries){const day=+e.date.split('-')[2];if(!entryMap[day])entryMap[day]=[];entryMap[day].push(e);}
@@ -3119,8 +3378,9 @@ function renderCalendar(){
 function selectCalDay(d){ calSelectedDay=d; renderCalendar(); }
 function showCalDetail(d){
   const m=+monthSel.value, y=+yearSel.value;
-  const obls=loadObligations().filter(o=>o.active!==false&&o.dueDay===d);
-  const fixedDay=loadFixed().filter(f=>f.active!==false&&f.dueDay===d);
+  const detPeriod=`${y}-${String(m).padStart(2,'0')}`;
+  const obls=loadObligations().filter(o=>o.active!==false&&o.dueDay===d&&(!o.since||detPeriod>=o.since));
+  const fixedDay=loadFixed().filter(f=>f.active!==false&&f.dueDay===d&&(!f.since||detPeriod>=f.since));
   const entries=loadEntries().filter(e=>{const dt=new Date(e.date+'T12:00:00');return dt.getDate()===d&&dt.getMonth()+1===m&&dt.getFullYear()===y;});
   const allCatsMap={...getCats('expense'),...getCats('income')};
   const shownCommitIds=new Set([...obls.map(o=>o.id),...fixedDay.map(f=>f.id)]);
