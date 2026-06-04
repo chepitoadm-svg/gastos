@@ -746,6 +746,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em}
             <div class="iv-balance zer" id="iv-balance">
               <span>Balance del período</span><span>$0</span>
             </div>
+            <div id="iv-month-progress" style="margin-top:14px"></div>
           </div>
         </div>
         <div class="section">
@@ -1562,19 +1563,65 @@ function render(){
   document.getElementById('card-obl-m').textContent=fmt(oblTotal);
   document.getElementById('card-obl-sub').textContent=`Pagado: ${fmt(paidOblAmt)} · ${paidOblCount}/${oblsActive.length}`;
 
-  /* IV comparison (period) */
-  const fInc=sumBy(periodEntries,'income'), fExp=sumBy(periodEntries,'expense');
-  const fMax=Math.max(fInc,fExp,1);
+  /* IV comparison (period) — gastos = variables pagados + fijos totales + obligaciones totales */
+  const fInc=sumBy(periodEntries,'income');
+  const totalExpM=varExpM+fxTotal+oblTotal; // variable pagado + fijos (pagados+pendientes) + obls (pagadas+pendientes)
+  const fMax=Math.max(fInc,totalExpM,1);
   document.getElementById('iv-inc').textContent=fmt(fInc);
-  document.getElementById('iv-exp').textContent=fmt(fExp);
+  document.getElementById('iv-exp').textContent=fmt(totalExpM);
   document.getElementById('iv-inc-bar').style.width=(fInc/fMax*100).toFixed(1)+'%';
-  document.getElementById('iv-exp-bar').style.width=(fExp/fMax*100).toFixed(1)+'%';
+  document.getElementById('iv-exp-bar').style.width=(totalExpM/fMax*100).toFixed(1)+'%';
   document.getElementById('iv-period-lbl').textContent=MONTHS[selM-1]+' '+selY;
-  const fBal=fInc-fExp;
+  const fBal=fInc-totalExpM;
   const ivEl=document.getElementById('iv-balance');
   ivEl.className='iv-balance '+(fBal>0?'pos':fBal<0?'neg':'zer');
   const sp=fInc>0?` (${Math.round(fBal/fInc*100)}% ahorro)`:'';
   ivEl.innerHTML=`<span>Balance</span><span>${fmt(fBal)}<span class="iv-sub">${sp}</span></span>`;
+
+  /* Progress bar del mes */
+  const progEl=document.getElementById('iv-month-progress');
+  if(progEl){
+    const today2=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    const dim=new Date(selY,selM,0).getDate();
+    const isCurrentM=selM===now.getMonth()+1&&selY===now.getFullYear();
+    const isPastM=selY*12+selM<now.getFullYear()*12+(now.getMonth()+1);
+    const daysPassed=isCurrentM?today2.getDate():(isPastM?dim:0);
+    const dayPct=daysPassed/dim*100;
+
+    // Gastado (real pagado hasta hoy en este mes)
+    const allMToDate=allM.filter(e=>new Date(e.date+'T12:00:00')<=today2);
+    const expActualToDate=allMToDate.filter(e=>(e.type||'expense')==='expense').reduce((s,e)=>s+ +e.amount,0);
+    // Comprometido: fijos y obligaciones con vencimiento <= hoy, aún sin pagar
+    const cutDay=isCurrentM?today2.getDate():(isPastM?dim:0);
+    const fxPendingDue=fixedActive.filter(f=>f.dueDay&&Math.min(f.dueDay,dim)<=cutDay&&!isFixedPaid(f.id,selY,selM)).reduce((s,f)=>s+ +f.amount,0);
+    const oblPendingDue=oblsActive.filter(o=>o.dueDay&&Math.min(o.dueDay,dim)<=cutDay&&!isOblPaid(o.id,selY,selM)).reduce((s,o)=>s+ +o.monthlyPayment,0);
+    const spentCommitted=expActualToDate+fxPendingDue+oblPendingDue;
+    const spentPct=totalExpM>0?Math.min(100,spentCommitted/totalExpM*100):0;
+
+    const dayBarColor=dayPct>85?'var(--red)':dayPct>60?'var(--yellow)':'var(--green)';
+    const expBarColor=spentPct>90?'var(--red)':spentPct>70?'var(--yellow)':'var(--accent2)';
+    const dayLabel=daysPassed===dim?'mes completo':`${daysPassed} de ${dim} días`;
+
+    progEl.innerHTML=`
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-size:0.72rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em">Días del mes</span>
+          <span style="font-size:0.72rem;color:var(--muted)">${dayLabel} · ${dayPct.toFixed(0)}%</span>
+        </div>
+        <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${dayPct.toFixed(1)}%;background:${dayBarColor};border-radius:3px;transition:width .3s"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-size:0.72rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em">Gastado + comprometido</span>
+          <span style="font-size:0.72rem;color:var(--muted)">${fmt(spentCommitted)} de ${fmt(totalExpM>0?totalExpM:spentCommitted)}</span>
+        </div>
+        <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${spentPct.toFixed(1)}%;background:${expBarColor};border-radius:3px;transition:width .3s"></div>
+        </div>
+      </div>`;
+  }
 
   /* Category chart */
   const ft=document.getElementById('filter-type').value;
