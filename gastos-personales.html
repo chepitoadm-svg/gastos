@@ -74,12 +74,20 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
 .main{display:flex;align-items:start;gap:20px}
 @media(max-width:1100px){#resumen-chart-panel{display:none!important}}
 @media(max-width:760px){
-  .main{flex-direction:column;gap:12px}
+  .main{flex-direction:column;gap:10px}
   .tabs-panel{order:-1}
   .form-toggle-btn{display:flex}
   #form-body{display:none}
   #form-body.open{display:block}
   .form-panel{position:static;padding:12px}
+  /* Gráfico: re-mostrar como tarjeta full-width debajo del formulario */
+  #resumen-chart-panel{display:block!important;flex:none;width:100%;position:static;order:1}
+  #resumen-chart-panel .section-body{flex-direction:row!important;align-items:center;gap:16px;padding:12px 16px 14px}
+  #resumen-donut-svg{max-width:130px!important;flex-shrink:0}
+  #resumen-donut-legend{margin-top:0!important;flex:1;min-width:0}
+  /* Secciones y tab-bar: llenar 100% del ancho */
+  .section{max-width:100%}
+  .tab-bar{max-width:100%}
 }
 .main-wrap{padding:20px 16px;box-sizing:border-box;width:100%;max-width:1400px;margin:0 auto}
 .tabs-panel{flex:1 1 0;min-width:0}
