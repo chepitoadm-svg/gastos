@@ -298,8 +298,8 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
 #form-toggle-arrow{font-size:0.75rem;transition:transform .25s}
 
 /* ── Floating action button ── */
-.mob-fab{display:none;position:fixed;bottom:22px;right:18px;z-index:60;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:2rem;font-weight:300;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.5);align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;line-height:1;padding-bottom:3px}
-.mob-fab:active{transform:scale(.91);box-shadow:0 2px 8px rgba(99,102,241,.35)}
+.mob-fab{display:none;position:fixed!important;bottom:22px!important;right:18px!important;top:auto!important;left:auto!important;z-index:9999;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:2rem;font-weight:300;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.5);align-items:center;justify-content:center;transition:box-shadow .15s;line-height:1;padding-bottom:3px;transform:translateZ(0);will-change:transform}
+.mob-fab:active{transform:translateZ(0) scale(.91);box-shadow:0 2px 8px rgba(99,102,241,.35)}
 .mob-drawer-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150}
 .mob-drawer-bg.open{display:block}
 .mob-drawer-header{display:none;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:14px}
@@ -382,8 +382,13 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
 .cft-pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .cft-pill:hover:not(.on){background:var(--s2)}
 .cft-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.cft-table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:480px}
-.cft-table thead th{font-size:0.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);font-weight:700;padding:7px 10px;border-bottom:2px solid var(--border);background:var(--s2);text-align:left;white-space:nowrap}
+.cft-table{width:100%;border-collapse:collapse;font-size:0.82rem;table-layout:fixed}
+.cft-table th:nth-child(1),.cft-table td:nth-child(1){width:13%}
+.cft-table th:nth-child(2),.cft-table td:nth-child(2){width:39%;overflow-wrap:break-word;word-break:break-word}
+.cft-table th:nth-child(3),.cft-table td:nth-child(3){width:16%}
+.cft-table th:nth-child(4),.cft-table td:nth-child(4){width:16%}
+.cft-table th:nth-child(5),.cft-table td:nth-child(5){width:16%}
+.cft-table thead th{font-size:0.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);font-weight:700;padding:7px 10px;border-bottom:2px solid var(--border);background:var(--s2);text-align:left;white-space:normal;overflow-wrap:break-word}
 .cft-table thead th.r{text-align:right}
 .cft-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
 .cft-table td.r{text-align:right;font-variant-numeric:tabular-nums}
@@ -540,10 +545,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
   .cft-summary{grid-template-columns:1fr 1fr}
   .cft-filters{gap:4px;flex-wrap:wrap}
   .cft-pill{padding:4px 10px;font-size:0.7rem}
-  .cft-table{font-size:0.74rem;min-width:420px}
-  .cft-table thead th{padding:5px 7px;font-size:0.59rem}
-  .cft-table td{padding:6px 7px}
-  .cft-date-cell{width:46px;font-size:0.7rem}
+  .cft-table{font-size:0.72rem}
+  .cft-table thead th{padding:5px 4px;font-size:0.58rem}
+  .cft-table td{padding:5px 4px}
+  .cft-date-cell{font-size:0.67rem}
 
   /* ── Flow CSS (sección Resumen) ── */
   .flow-metrics{grid-template-columns:1fr 1fr}
@@ -612,7 +617,9 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
   .row2{grid-template-columns:1fr}
   .tab{padding:9px 8px;font-size:0.65rem}
   .section-title{font-size:0.75rem}
-  .cft-table{font-size:0.68rem;min-width:360px}
+  .cft-table{font-size:0.63rem}
+  .cft-table thead th{padding:4px 3px;font-size:0.54rem}
+  .cft-table td{padding:4px 3px}
 }
 </style>
 </head>
