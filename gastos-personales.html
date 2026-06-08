@@ -295,6 +295,16 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
 .form-toggle-btn{display:none;width:100%;background:none;border:none;cursor:pointer;padding:10px 0 14px;font-size:0.88rem;font-weight:700;color:var(--accent2);text-align:left;gap:8px;align-items:center;justify-content:space-between}
 #form-toggle-arrow{font-size:0.75rem;transition:transform .25s}
 
+/* ── Floating action button ── */
+.mob-fab{display:none;position:fixed;bottom:22px;right:18px;z-index:60;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:2rem;font-weight:300;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.5);align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;line-height:1;padding-bottom:3px}
+.mob-fab:active{transform:scale(.91);box-shadow:0 2px 8px rgba(99,102,241,.35)}
+.mob-drawer-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150}
+.mob-drawer-bg.open{display:block}
+.mob-drawer-header{display:none;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.mob-drawer-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--muted2);padding:4px 8px;line-height:1;border-radius:6px}
+.mob-drawer-close:hover{background:var(--s2)}
+@media(max-width:760px){.mob-fab{display:flex}}
+
 /* ── Disponible para gastar ── */
 .disp-main{text-align:center;padding:10px 0 6px}
 .disp-lbl{font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
@@ -551,6 +561,18 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
   /* ── Toast ── */
   .toast{right:10px;left:10px;text-align:center}
 
+  /* ── FAB + Drawer ── */
+  .form-panel{display:none!important}
+  .form-panel.mob-open{
+    display:block!important;position:fixed!important;
+    bottom:0!important;left:0!important;right:0!important;top:auto!important;
+    z-index:200;border-radius:16px 16px 0 0!important;
+    max-height:92vh!important;overflow-y:auto!important;
+    width:100%!important;padding:16px 16px 32px!important;
+    box-shadow:0 -4px 32px rgba(0,0,0,.28)!important;
+  }
+  .mob-drawer-header{display:flex}
+
   /* ── iOS: evitar zoom automático al tocar inputs ── */
   .field input,.field select,.field textarea,
   .filter-bar select,.period-selects select,
@@ -670,6 +692,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
 
     <!-- LEFT: FORM -->
     <div class="form-panel">
+      <div class="mob-drawer-header">
+        <span style="font-size:0.9rem;font-weight:700;color:var(--text)">Nuevo movimiento</span>
+        <button class="mob-drawer-close" onclick="closeMobDrawer()" title="Cerrar">×</button>
+      </div>
       <button class="form-toggle-btn" id="form-toggle-btn" onclick="toggleForm()">
         <span id="form-toggle-lbl">+ Agregar movimiento</span>
         <span id="form-toggle-arrow">▼</span>
@@ -3654,6 +3680,7 @@ document.getElementById('entry-form').addEventListener('submit',ev=>{
     showToast('Obligación registrada','var(--purple)');
     ev.target.reset();
     render();
+    if(window.innerWidth<=760) closeMobDrawer();
     return;
   }
   const entry={id:Date.now().toString(),type:currentType,amount:+document.getElementById('f-amount').value,description:document.getElementById('f-desc').value.trim(),category:document.getElementById('f-category').value,date:document.getElementById('f-date').value,note:document.getElementById('f-note').value.trim()};
@@ -3673,6 +3700,7 @@ document.getElementById('entry-form').addEventListener('submit',ev=>{
   populateCatSelect(document.getElementById('f-category'),currentType);
   setExpType('variable');
   render();
+  if(window.innerWidth<=760) closeMobDrawer();
   if(currentType==='income'){
     const d=new Date(entry.date+'T12:00:00');
     if(d.getDate()<=15) checkShowReservaQ2Modal(d.getMonth()+1,d.getFullYear(),+entry.amount);
@@ -4051,6 +4079,25 @@ render();
     if(cur&&!cur.contains(e.relatedTarget)){tip.style.opacity='0';cur=null;}
   });
 })();
+function openMobDrawer(){
+  const panel=document.querySelector('.form-panel');
+  const body=document.getElementById('form-body');
+  panel.classList.add('mob-open');
+  document.getElementById('mob-drawer-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+  body.classList.add('open');
+  body.style.display='block';
+}
+function closeMobDrawer(){
+  document.querySelector('.form-panel').classList.remove('mob-open');
+  document.getElementById('mob-drawer-bg').classList.remove('open');
+  document.body.style.overflow='';
+}
 </script>
+
+<!-- Mobile: backdrop + FAB -->
+<div class="mob-drawer-bg" id="mob-drawer-bg" onclick="closeMobDrawer()"></div>
+<button class="mob-fab" onclick="openMobDrawer()" title="Agregar movimiento" aria-label="Agregar movimiento">+</button>
+
 </body>
 </html>
