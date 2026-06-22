@@ -748,6 +748,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
             <input type="number" id="f-obl-dueday" placeholder="1–31" min="1" max="31" />
           </div>
         </div>
+        <div class="field" id="f-obl-startmonth-field" style="display:none">
+          <label>Mes del primer pago (opcional)</label>
+          <input type="month" id="f-obl-startmonth" title="Dejar vacío para iniciar este mes" />
+        </div>
         <div class="field">
           <label>Nota (opcional)</label>
           <textarea id="f-note" placeholder="Detalles..."></textarea>
@@ -1059,6 +1063,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
       <div class="field"><label>Deuda total (opcional)</label><input type="number" id="o-total" placeholder="0.00" step="0.01" min="0" /></div>
       <div class="field"><label>Día de pago</label><input type="number" id="o-dueday" placeholder="15" min="1" max="31" /></div>
     </div>
+    <div class="field"><label>Mes del primer pago (opcional)</label><input type="month" id="o-startmonth" title="Dejar vacío para iniciar este mes" /></div>
     <div class="row2">
       <div class="field"><label>Categoría</label><select id="o-category"></select></div>
       <div class="field"><label>Notas</label><input type="text" id="o-note" placeholder="Institución, referencia..." /></div>
@@ -1129,6 +1134,10 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
     <div class="row2">
       <div class="field"><label>Día de pago</label><input type="number" id="ec-dueday" min="1" max="31" placeholder="1–31" /></div>
       <div class="field"><label>Nota (opcional)</label><input type="text" id="ec-note" /></div>
+    </div>
+    <div class="field" id="ec-since-field" style="display:none">
+      <label>Mes del primer pago</label>
+      <input type="month" id="ec-since" title="Mes desde el que aparece esta obligación" />
     </div>
     <div class="modal-footer">
       <button class="btn ghost md" onclick="closeModal('modal-edit-commit')">Cancelar</button>
@@ -1495,6 +1504,7 @@ function setType(t){
   document.getElementById('f-cat-field').style.display=isObl?'none':'block';
   document.getElementById('f-obl-type-field').style.display=isObl?'block':'none';
   document.getElementById('f-obl-extra-field').style.display=isObl?'grid':'none';
+  document.getElementById('f-obl-startmonth-field').style.display=isObl?'block':'none';
   document.getElementById('exp-type-row').style.display=t==='expense'?'block':'none';
   if(!isObl) populateCatSelect(document.getElementById('f-category'),t);
 }
@@ -2150,6 +2160,7 @@ function openEditCommit(id,type){
   document.getElementById('ec-obl-fields').style.display=isObl?'block':'none';
   document.getElementById('ec-fx-fields').style.display=isObl?'none':'block';
   document.getElementById('ec-to-var-btn').style.display=isObl?'none':'inline-block';
+  document.getElementById('ec-since-field').style.display=isObl?'block':'none';
   if(isObl){
     const obl=loadObligations().find(o=>o.id===id); if(!obl) return;
     document.getElementById('ec-title').textContent='Editar Obligación';
@@ -2160,6 +2171,7 @@ function openEditCommit(id,type){
     document.getElementById('ec-remaining').value=obl.remainingDebt||'';
     document.getElementById('ec-dueday').value=obl.dueDay||'';
     document.getElementById('ec-note').value=obl.note||'';
+    document.getElementById('ec-since').value=obl.since||'';
     populateCatSelect(document.getElementById('ec-obl-category'),'expense',obl.category||'other');
     document.getElementById('ec-save-btn').className='btn pur md full';
   } else {
@@ -2195,7 +2207,8 @@ function saveEditCommit(){
     const monthly=+document.getElementById('ec-monthly').value;
     if(!monthly){showToast('El pago mensual es requerido','var(--yellow)');return;}
     const obls=loadObligations(); const idx=obls.findIndex(o=>o.id===editCommitId); if(idx<0) return;
-    obls[idx]={...obls[idx],name,type:document.getElementById('ec-type').value,monthlyPayment:monthly,totalDebt:+document.getElementById('ec-total').value||obls[idx].totalDebt,remainingDebt:+document.getElementById('ec-remaining').value||obls[idx].remainingDebt,dueDay:newDueDay,category:document.getElementById('ec-obl-category').value||obls[idx].category||'other',note:document.getElementById('ec-note').value.trim()};
+    const newSince=document.getElementById('ec-since').value||obls[idx].since;
+    obls[idx]={...obls[idx],name,type:document.getElementById('ec-type').value,monthlyPayment:monthly,totalDebt:+document.getElementById('ec-total').value||obls[idx].totalDebt,remainingDebt:+document.getElementById('ec-remaining').value||obls[idx].remainingDebt,dueDay:newDueDay,category:document.getElementById('ec-obl-category').value||obls[idx].category||'other',note:document.getElementById('ec-note').value.trim(),since:newSince};
     saveObligations(obls);
     syncLinkedEntryDates(editCommitId,'obl',newDueDay);
   } else {
@@ -3498,9 +3511,11 @@ function addObligation(){
   const name=document.getElementById('o-name').value.trim();
   const monthly=+document.getElementById('o-monthly').value;
   if(!name||!monthly){ showToast('Nombre y pago mensual requeridos','var(--yellow)'); return; }
-  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,category:document.getElementById('o-category').value||'other',note:document.getElementById('o-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
+  const startMonth=document.getElementById('o-startmonth').value;
+  const oblSince=startMonth||`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const obl={id:Date.now().toString(),name,type:resolveType('o-type','o-custom-type'),monthlyPayment:monthly,totalDebt:+document.getElementById('o-total').value||0,remainingDebt:+document.getElementById('o-total').value||0,dueDay:+document.getElementById('o-dueday').value||null,category:document.getElementById('o-category').value||'other',note:document.getElementById('o-note').value.trim(),active:true,since:oblSince};
   const data=loadObligations(); data.push(obl); saveObligations(data);
-  ['o-name','o-monthly','o-total','o-dueday','o-note'].forEach(id=>document.getElementById(id).value='');
+  ['o-name','o-monthly','o-total','o-dueday','o-note','o-startmonth'].forEach(id=>document.getElementById(id).value='');
   showToast('Obligación registrada','var(--purple)'); renderObligationsModal(); render();
 }
 function deleteObligation(id){
@@ -3679,7 +3694,9 @@ document.getElementById('entry-form').addEventListener('submit',ev=>{
     const monthly=+document.getElementById('f-amount').value;
     if(!name||!monthly){showToast('Nombre y pago mensual requeridos','var(--yellow)');return;}
     const tot=+document.getElementById('f-obl-total').value||0;
-    const obl={id:Date.now().toString(),name,type:document.getElementById('f-obl-type').value,monthlyPayment:monthly,totalDebt:tot,remainingDebt:tot,dueDay:+document.getElementById('f-obl-dueday').value||null,note:document.getElementById('f-note').value.trim(),active:true,since:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`};
+    const fOblStartMonth=document.getElementById('f-obl-startmonth').value;
+    const fOblSince=fOblStartMonth||`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const obl={id:Date.now().toString(),name,type:document.getElementById('f-obl-type').value,monthlyPayment:monthly,totalDebt:tot,remainingDebt:tot,dueDay:+document.getElementById('f-obl-dueday').value||null,note:document.getElementById('f-note').value.trim(),active:true,since:fOblSince};
     const data=loadObligations(); data.push(obl); saveObligations(data);
     showToast('Obligación registrada','var(--purple)');
     ev.target.reset();
