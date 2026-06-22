@@ -772,6 +772,7 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
     <div class="tabs-panel">
       <div class="tab-bar">
         <button class="tab on" id="tab-resumen"      onclick="setView('resumen')">Resumen</button>
+        <button class="tab"    id="tab-presupuesto"  onclick="setView('presupuesto')">Presupuesto</button>
         <button class="tab"    id="tab-compromisos"  onclick="setView('compromisos')">Compromisos</button>
         <button class="tab"    id="tab-gastos"       onclick="setView('gastos')">Gastos</button>
         <button class="tab"    id="tab-ingresos"     onclick="setView('ingresos')">Ingresos</button>
@@ -836,6 +837,17 @@ header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;position:absol
             </span>
           </div>
           <div class="section-body" id="resumen-obl-body"></div>
+        </div>
+      </div>
+
+      <!-- TAB: PRESUPUESTO -->
+      <div id="view-presupuesto" style="display:none">
+        <div class="section">
+          <div class="section-head">
+            <span class="section-title">Presupuesto mensual por categoría</span>
+            <span class="section-meta" id="budget-period-lbl"></span>
+          </div>
+          <div class="section-body" id="budget-body"></div>
         </div>
       </div>
 
@@ -1843,6 +1855,7 @@ function render(){
   renderResumenCompromisos(selM, selY);
   renderDailyBudget();
   renderSavingsGoal(selM,selY);
+  renderBudget(selM,selY);
 
   /* Compromisos tab */
   renderCompromisos(selY,selM);
@@ -2814,6 +2827,168 @@ function clearSavingsGoal(selM,selY){
   renderSavingsGoal(selM,selY);
 }
 
+/* ── Presupuesto por categoría ── */
+let _budgetSpentTotal=0;
+function loadBudgets(){ try{return JSON.parse(localStorage.getItem('category_budgets')||'{}')||{};}catch(e){return {};} }
+function saveBudgets(b){ localStorage.setItem('category_budgets',JSON.stringify(b)); }
+function roundBudget(n){
+  if(!n||n<=0) return 0;
+  if(currency==='CRC') return Math.max(1000,Math.round(n/1000)*1000);
+  return Math.max(5,Math.round(n/5)*5);
+}
+function budgetSpentByCat(selM,selY){
+  const spent={};
+  loadEntries().forEach(e=>{
+    if((e.type||'expense')!=='expense'||e.commitId) return;
+    const d=new Date(e.date+'T12:00:00');
+    if(d.getMonth()+1===selM&&d.getFullYear()===selY) spent[e.category]=(spent[e.category]||0)+ +e.amount;
+  });
+  return spent;
+}
+// Promedio de gastos variables por categoría en los últimos 3 meses con datos
+function computeSuggestedBudgets(){
+  const byMonth={};
+  loadEntries().forEach(e=>{
+    if((e.type||'expense')!=='expense'||e.commitId) return;
+    const d=new Date(e.date+'T12:00:00');
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    (byMonth[k]||(byMonth[k]={}));
+    byMonth[k][e.category]=(byMonth[k][e.category]||0)+ +e.amount;
+  });
+  const months=Object.keys(byMonth).sort().reverse().slice(0,3);
+  if(!months.length) return {months:0,budgets:{}};
+  const totals={};
+  months.forEach(k=>Object.entries(byMonth[k]).forEach(([c,v])=>totals[c]=(totals[c]||0)+v));
+  const budgets={};
+  Object.entries(totals).forEach(([c,v])=>budgets[c]=roundBudget(v/months.length));
+  return {months:months.length,budgets};
+}
+function renderBudget(selM,selY){
+  const el=document.getElementById('budget-body');
+  if(!el) return;
+  const lbl=document.getElementById('budget-period-lbl');
+  if(lbl) lbl.textContent=MONTHS[selM-1]+' '+selY;
+  const cats=getCats('expense');
+  const catKeys=Object.keys(cats);
+  const budgets=loadBudgets();
+  const spent=budgetSpentByCat(selM,selY);
+  const incM=loadEntries().filter(e=>{const d=new Date(e.date+'T12:00:00');return (e.type||'expense')==='income'&&d.getMonth()+1===selM&&d.getFullYear()===selY;}).reduce((s,e)=>s+ +e.amount,0);
+
+  const totalBudget=Object.values(budgets).reduce((s,v)=>s+ +v,0);
+  const totalSpent=Object.values(spent).reduce((s,v)=>s+v,0);
+  _budgetSpentTotal=totalSpent;
+  const remaining=totalBudget-totalSpent;
+
+  // Orden: mayor gasto primero, luego con límite, luego alfabético
+  const ordered=[...catKeys].sort((a,b)=>{
+    const sa=spent[a]||0, sb=spent[b]||0;
+    if(sb!==sa) return sb-sa;
+    const ba=+budgets[a]||0, bb=+budgets[b]||0;
+    if(bb!==ba) return bb-ba;
+    return cats[a].localeCompare(cats[b]);
+  });
+  const hasHistory=loadEntries().some(e=>(e.type||'expense')==='expense'&&!e.commitId);
+  const step=currency==='CRC'?'1000':'5';
+
+  const rows=ordered.map(cat=>{
+    const color=EXP_COLORS[catKeys.indexOf(cat)]||'#94a3b8';
+    const limit=+budgets[cat]||0;
+    const sp=spent[cat]||0;
+    let bar='';
+    if(limit>0){
+      const realPct=sp/limit*100;
+      const pct=Math.min(100,realPct);
+      const over=sp>limit;
+      const barColor=realPct>=90?'var(--red)':realPct>=70?'var(--yellow)':'var(--green)';
+      const statusTxt=over?`−${fmt(sp-limit)} excedido`:`quedan ${fmt(limit-sp)}`;
+      const statusColor=over?'var(--red)':realPct>=70?'var(--yellow)':'var(--green)';
+      bar=`<div style="height:8px;background:var(--bg);border-radius:99px;overflow:hidden;margin:2px 0 4px"><div style="height:100%;border-radius:99px;background:${barColor};width:${pct.toFixed(1)}%;transition:width .4s"></div></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;font-size:0.72rem">
+        <span style="color:var(--muted2)">${fmt(sp)} de ${fmt(limit)} · ${realPct.toFixed(0)}%</span>
+        <span style="color:${statusColor};font-weight:600;flex-shrink:0">${statusTxt}</span>
+      </div>`;
+    } else if(sp>0){
+      bar=`<div style="font-size:0.72rem;color:var(--muted2)">Gastado ${fmt(sp)} · sin límite definido</div>`;
+    }
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span class="donut-legend-dot" style="background:${color}"></span>
+        <span style="flex:1;font-size:0.85rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(cats[cat])}</span>
+        <span style="font-size:0.66rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em">Límite</span>
+        <input type="number" id="budget-input-${cat}" value="${limit||''}" placeholder="0" min="0" step="${step}" inputmode="numeric"
+          oninput="onBudgetInput()"
+          style="width:96px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px 9px;font-size:0.82rem;text-align:right;outline:none"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'" />
+      </div>
+      ${bar}
+    </div>`;
+  }).join('');
+
+  const remColor=remaining>=0?'var(--green)':'var(--red)';
+  let incomeNote='';
+  if(incM>0&&totalBudget>0){
+    if(totalBudget>incM){
+      incomeNote=`<div style="background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:9px 12px;font-size:0.76rem;color:var(--red);margin-bottom:4px">⚠ Tu presupuesto (${fmt(totalBudget)}) supera tu ingreso del mes (${fmt(incM)}). Ajustá los límites para no gastar de más.</div>`;
+    } else {
+      incomeNote=`<div style="font-size:0.74rem;color:var(--muted2);margin-bottom:4px">Ingreso del mes: <strong style="color:var(--green)">${fmt(incM)}</strong> · presupuesto asignado: <strong>${fmt(totalBudget)}</strong> (${Math.round(totalBudget/incM*100)}%)</div>`;
+    }
+  }
+
+  el.innerHTML=`
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn acc sm" onclick="applySuggestedBudgets()" data-tip="Calcula un límite por categoría usando el promedio de tus últimos 3 meses con gastos. Después podés ajustar y guardar.">✨ Calcular sugerido</button>
+      <button class="btn inc sm" onclick="saveBudgetFromInputs()">Guardar presupuesto</button>
+      ${totalBudget>0?`<button class="btn ghost sm" onclick="clearAllBudgets()">Quitar todo</button>`:''}
+    </div>
+    <div class="sum-grid cols3" style="margin-bottom:8px">
+      <div class="sum-cell accent"><div class="sum-lbl">Presupuesto</div><div class="sum-val" id="budget-total-val" style="color:var(--accent2)">${fmt(totalBudget)}</div></div>
+      <div class="sum-cell red"><div class="sum-lbl">Gastado</div><div class="sum-val" style="color:var(--red)">${fmt(totalSpent)}</div></div>
+      <div class="sum-cell ${remaining>=0?'green':'red'}"><div class="sum-lbl">Disponible</div><div class="sum-val" id="budget-remaining-val" style="color:${remColor}">${fmt(remaining)}</div></div>
+    </div>
+    ${incomeNote}
+    <hr class="sec-divider" />
+    ${hasHistory?'':'<div style="font-size:0.8rem;color:var(--muted2);padding:4px 0 12px">Aún no hay historial de gastos variables. A medida que registres gastos podrás calcular un presupuesto sugerido automáticamente.</div>'}
+    ${rows}
+    <div style="margin-top:6px;font-size:0.7rem;color:var(--muted2);line-height:1.5">Los límites aplican a <strong>gastos variables</strong> (no incluyen fijos ni obligaciones) y se mantienen mes a mes. El gasto mostrado corresponde a ${MONTHS[selM-1]} ${selY}.</div>`;
+}
+function onBudgetInput(){
+  const cats=getCats('expense');
+  let total=0;
+  Object.keys(cats).forEach(c=>{const el=document.getElementById('budget-input-'+c);if(el)total+= +el.value||0;});
+  const totEl=document.getElementById('budget-total-val');
+  if(totEl) totEl.textContent=fmt(total);
+  const remEl=document.getElementById('budget-remaining-val');
+  if(remEl){
+    const rem=total-_budgetSpentTotal;
+    remEl.textContent=fmt(rem);
+    remEl.style.color=rem>=0?'var(--green)':'var(--red)';
+    const cell=remEl.closest('.sum-cell');
+    if(cell) cell.className='sum-cell '+(rem>=0?'green':'red');
+  }
+}
+function applySuggestedBudgets(){
+  const {months,budgets}=computeSuggestedBudgets();
+  if(!months){showToast('No hay suficiente historial de gastos variables','var(--yellow)');return;}
+  const cats=getCats('expense');
+  Object.keys(cats).forEach(c=>{const el=document.getElementById('budget-input-'+c);if(el)el.value=budgets[c]||'';});
+  onBudgetInput();
+  showToast(`Sugerencia basada en ${months} mes${months>1?'es':''} — revisá y guardá`,'var(--accent2)');
+}
+function saveBudgetFromInputs(){
+  const cats=getCats('expense');
+  const b={};
+  Object.keys(cats).forEach(c=>{const el=document.getElementById('budget-input-'+c);if(el){const v=+el.value;if(v>0)b[c]=v;}});
+  saveBudgets(b);
+  showToast('Presupuesto guardado','var(--green)');
+  render();
+}
+function clearAllBudgets(){
+  if(!confirm('¿Quitar todos los límites de presupuesto?')) return;
+  localStorage.removeItem('category_budgets');
+  showToast('Presupuesto eliminado','var(--yellow)');
+  render();
+}
+
 function renderCashflowAlerts(){
   const el=document.getElementById('cft-alerts');
   if(!el) return;
@@ -3292,7 +3467,7 @@ function saveQuickExpense(){
 
 /* ── View tabs ── */
 let currentView='resumen';
-const VIEWS=['resumen','compromisos','gastos','ingresos','calendario','flujo','salud'];
+const VIEWS=['resumen','presupuesto','compromisos','gastos','ingresos','calendario','flujo','salud'];
 function setView(v){
   currentView=v;
   VIEWS.forEach(id=>{
@@ -3302,6 +3477,7 @@ function setView(v){
   if(v==='calendario'){ calSelectedDay=null; renderCalendar(); }
   if(v==='flujo') renderCashflowTimeline();
   if(v==='salud'){ const m=+monthSel.value,y=+yearSel.value; renderHealth(getPeriodEntries(),m,y); renderSavingsGoal(m,y); }
+  if(v==='presupuesto'){ renderBudget(+monthSel.value,+yearSel.value); }
 }
 
 /* ── Reserva Segunda Quincena ── */
@@ -3986,7 +4162,7 @@ function exportData(){
 
   // Claves principales
   ['entries','obligations','fixedExpenses','currency','exchangeRate',
-   'custom_cats_expense','custom_cats_income','obligationsChecked','cashflow_schedule','payday_day'
+   'custom_cats_expense','custom_cats_income','obligationsChecked','cashflow_schedule','payday_day','category_budgets'
   ].forEach(k=>{const v=localStorage.getItem(k); if(v!==null) data[k]=v;});
 
   // Todas las claves de pagos registrados (obl_paid_* y fx_paid_*)
